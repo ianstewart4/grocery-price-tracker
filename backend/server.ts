@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express'
 import dotenv from 'dotenv'
+import { errorHandler } from './middleware/errorMiddleware'
 import axios from 'axios'
 
 dotenv.config()
@@ -7,11 +8,13 @@ dotenv.config()
 const app: Express = express()
 const port = process.env.PORT
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
 app.use('/api/trackers', require('./routes/trackerRoutes'))
 
-app.get('/tracker', (req: Request, res: Response) => {
-    res.send('Express + TypeScript Server')
-})
+app.use(errorHandler);
+)
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)
@@ -19,7 +22,7 @@ app.listen(port, () => {
 
 const config: {} = {
     headers: {
-        'x-apikey': '1im1hL52q9xvta16GlSdYDsTsG0dmyhF',
+        'x-apikey': process.env.API_KEY,
     },
 }
 
@@ -27,15 +30,15 @@ const config: {} = {
 
 const today = new Date();
 const yyyy = today.getFullYear();
-let mm = today.getMonth() + 1; // Months start at 0!
-let dd = today.getDate();
+let mm: number = today.getMonth() + 1; // Months start at 0!
+let dd: number = today.getDate();
 
 if (dd < 10) dd = '0' + dd;
 if (mm < 10) mm = '0' + mm;
 
 const formattedToday = dd + mm + yyyy;
 
-console.log(formattedToday)
+// console.log(formattedToday)
 
 // Types of sales to consider
 // On sale
@@ -73,7 +76,7 @@ const items: string[] = [
     '20148240_EA', // Meatballs
 ]
 
-items.map((item) => {
-    fetchItems(item)
-})
+// items.map((item) => {
+//     fetchItems(item)
+// })
 

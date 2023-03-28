@@ -14,20 +14,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const errorMiddleware_1 = require("./middleware/errorMiddleware");
 const axios_1 = __importDefault(require("axios"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: false }));
 app.use('/api/trackers', require('./routes/trackerRoutes'));
-app.get('/tracker', (req, res) => {
-    res.send('Express + TypeScript Server');
-});
+app.use(errorMiddleware_1.errorHandler);
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
 const config = {
     headers: {
-        'x-apikey': '1im1hL52q9xvta16GlSdYDsTsG0dmyhF',
+        'x-apikey': process.env.API_KEY,
     },
 };
 // Getting DDMMYYY formatted date for API requirement
@@ -40,7 +41,7 @@ if (dd < 10)
 if (mm < 10)
     mm = '0' + mm;
 const formattedToday = dd + mm + yyyy;
-console.log(formattedToday);
+// console.log(formattedToday)
 // Types of sales to consider
 // On sale
 // 2 for x
@@ -72,6 +73,6 @@ const items = [
     '20971511_EA',
     '20148240_EA', // Meatballs
 ];
-items.map((item) => {
-    fetchItems(item);
-});
+// items.map((item) => {
+//     fetchItems(item)
+// })
