@@ -13,10 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const colors = require('colors');
 const dotenv_1 = __importDefault(require("dotenv"));
 const errorMiddleware_1 = require("./middleware/errorMiddleware");
 const axios_1 = __importDefault(require("axios"));
 dotenv_1.default.config();
+const db_1 = require("./config/db");
+(0, db_1.connectDB)();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.use(express_1.default.json());
@@ -47,21 +50,30 @@ const formattedToday = dd + mm + yyyy;
 // 2 for x
 // limit
 const fetchItems = (item) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     const API = `https://api.pcexpress.ca/product-facade/v4/products/${item}?lang=en&date=${formattedToday}&pickupType=STORE&storeId=1514&banner=superstore`;
     try {
         const response = yield axios_1.default.get(API, config);
         const itemImageURL = response.data.imageAssets[0].mediumUrl;
-        const brand = response.data.brand;
+        const brand = (_a = response.data.brand) !== null && _a !== void 0 ? _a : '';
         const name = response.data.name;
-        const pkgSize = response.data.packageSize;
+        const link = `https://www.realcanadiansuperstore.ca/${response.data.link}`;
+        const pkgSize = Number(response.data.packageSize.split(' ')[0]);
+        const uom = response.data.uom;
+        const itemCode = response.data.code;
         const price = response.data.offers[0].price.value;
+        const unitSize = response.data.offers[0].comparisonPrices[0].quantity; // The denominator for the per unit price eg. 100ml
+        const unitPrice = price / (pkgSize / unitSize);
+        // const salePrice //
+        // const saleUnitPrice
+        // const saleEndDate
         // const regPrice: number = response.data.offers[0].wasPrice.value ?? price
-        console.log(`\n${item} \n${brand} ${name} (${pkgSize})`);
-        console.log(price);
+        console.log(`\n${brand} ${name} (${pkgSize})`);
+        console.log(unitSize);
+        console.log(unitPrice);
         // console.log(regPrice)
         console.log(response.data.offers[0].badges.dealBadge ? response.data.offers[0].badges.dealBadge.text : 'No Sale');
-        console.log(response.data.offers[0].badges.dealBadge ? (_a = response.data.offers[0].badges.dealBadge.expiryDate) !== null && _a !== void 0 ? _a : 'No Expiry' : '');
+        console.log(response.data.offers[0].badges.dealBadge ? (_b = response.data.offers[0].badges.dealBadge.expiryDate) !== null && _b !== void 0 ? _b : 'No Expiry' : '');
     }
     catch (err) {
         console.log(err);
@@ -69,10 +81,12 @@ const fetchItems = (item) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const items = [
     '20967759_EA',
-    '21184617_EA',
-    '20971511_EA',
-    '20148240_EA', // Meatballs
+    // '21184617_EA',
+    // '20971511_EA', // Pizza
+    // '20148240_EA', // Meatballs
+    '20116186001_KG',
+    '21194363_EA', // Tea
 ];
-// items.map((item) => {
-//     fetchItems(item)
-// })
+items.map((item) => {
+    fetchItems(item);
+});

@@ -1,10 +1,14 @@
 import express, { Express, Request, Response } from 'express'
+const colors = require('colors')
 import dotenv from 'dotenv'
 import { errorHandler } from './middleware/errorMiddleware'
 import axios from 'axios'
 
 dotenv.config()
 
+import { connectDB } from './config/db'
+
+connectDB()
 const app: Express = express()
 const port = process.env.PORT
 
@@ -13,8 +17,7 @@ app.use(express.urlencoded({ extended: false }))
 
 app.use('/api/trackers', require('./routes/trackerRoutes'))
 
-app.use(errorHandler);
-)
+app.use(errorHandler)
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)
@@ -51,16 +54,26 @@ const fetchItems = async (item: string) => {
     try {
         const response = await axios.get(API, config)
         const itemImageURL: string = response.data.imageAssets[0].mediumUrl
-        const brand: string = response.data.brand
+        const brand: string = response.data.brand ?? ''
         const name: string = response.data.name
-        const pkgSize: string = response.data.packageSize
+        const link: string = `https://www.realcanadiansuperstore.ca/${response.data.link}`
+        const pkgSize: number = Number(response.data.packageSize.split(' ')[0])
+        const uom: string = response.data.uom
+        const itemCode: string = response.data.code
         const price: number = response.data.offers[0].price.value
+        const unitSize: number = response.data.offers[0].comparisonPrices[0].quantity // The denominator for the per unit price eg. 100ml
+        const unitPrice: number = price / (pkgSize / unitSize)
+        // const salePrice //
+        // const saleUnitPrice
+        // const saleEndDate
+
         // const regPrice: number = response.data.offers[0].wasPrice.value ?? price
 
 
 
-        console.log(`\n${item} \n${brand} ${name} (${pkgSize})`)
-        console.log(price)
+        console.log(`\n${brand} ${name} (${pkgSize})`)
+        console.log(unitSize)
+        console.log(unitPrice)
         // console.log(regPrice)
         console.log(response.data.offers[0].badges.dealBadge ? response.data.offers[0].badges.dealBadge.text : 'No Sale')
         console.log(response.data.offers[0].badges.dealBadge ? response.data.offers[0].badges.dealBadge.expiryDate ?? 'No Expiry' : '')
@@ -71,12 +84,14 @@ const fetchItems = async (item: string) => {
 
 const items: string[] = [
     '20967759_EA',
-    '21184617_EA',
-    '20971511_EA', // Pizza
-    '20148240_EA', // Meatballs
+    // '21184617_EA',
+    // '20971511_EA', // Pizza
+    // '20148240_EA', // Meatballs
+    '20116186001_KG', // Carrots
+    '21194363_EA', // Tea
 ]
 
-// items.map((item) => {
-//     fetchItems(item)
-// })
+items.map((item) => {
+    fetchItems(item)
+})
 
