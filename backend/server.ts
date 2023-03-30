@@ -62,8 +62,10 @@ const fetchItems = async (item: string) => {
         const itemCode: string = response.data.code
         const price: number = response.data.offers[0].price.value
         const unitSize: number = response.data.offers[0].comparisonPrices[0].quantity // The denominator for the per unit price eg. 100ml
-        const unitPrice: number = price / (pkgSize / unitSize)
-        // const salePrice //
+        const unitPrice: number = Number((price / (pkgSize / unitSize)).toFixed(2))
+
+        // const saleType: string = response.data.offers[0].badges.dealBadge?.type ?? ''//
+        // const salePrice: string = response.data.offers[0].badges.dealBadge?.text ?? ''//
         // const saleUnitPrice
         // const saleEndDate
 
@@ -74,6 +76,7 @@ const fetchItems = async (item: string) => {
         console.log(`\n${brand} ${name} (${pkgSize})`)
         console.log(unitSize)
         console.log(unitPrice)
+        // console.log(salePrice, saleType)
         // console.log(regPrice)
         console.log(response.data.offers[0].badges.dealBadge ? response.data.offers[0].badges.dealBadge.text : 'No Sale')
         console.log(response.data.offers[0].badges.dealBadge ? response.data.offers[0].badges.dealBadge.expiryDate ?? 'No Expiry' : '')
@@ -84,11 +87,11 @@ const fetchItems = async (item: string) => {
 
 const items: string[] = [
     '20967759_EA',
-    // '21184617_EA',
-    // '20971511_EA', // Pizza
+    '21184617_EA',
+    '20971511_EA', // Pizza
     // '20148240_EA', // Meatballs
-    '20116186001_KG', // Carrots
-    '21194363_EA', // Tea
+    // '20116186001_KG', // Carrots
+    // '21194363_EA', // Tea
 ]
 
 items.map((item) => {
