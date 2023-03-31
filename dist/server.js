@@ -31,12 +31,6 @@ app.use(errorMiddleware_1.errorHandler);
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
-// For some reason these comments cannot be removed without breaking everything. 
-// console.log(formattedToday)
-// Types of sales to consider
-// On sale
-// 2 for x
-// limit
 const fetchItems = (item) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const API = `https://api.pcexpress.ca/product-facade/v4/products/${item}?lang=en&date=${dateConstants_1.ddmmyyyy}&pickupType=STORE&storeId=1514&banner=superstore`;

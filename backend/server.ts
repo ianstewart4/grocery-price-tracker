@@ -1,37 +1,29 @@
-import express, { Express, Request, Response } from 'express'
-const colors = require('colors')
-import dotenv from 'dotenv'
-import { errorHandler } from './middleware/errorMiddleware'
-import axios from 'axios'
-import { ddmmyyyy } from './constants/dateConstants'
+import express, { Express, Request, Response } from 'express';
+const colors = require('colors');
+import dotenv from 'dotenv';
+import { errorHandler } from './middleware/errorMiddleware';
+import axios from 'axios';
+import { ddmmyyyy } from './constants/dateConstants';
 
-dotenv.config()
+dotenv.config();
 
-import { connectDB } from './config/db'
-import { config } from './constants/apiConstants'
+import { connectDB } from './config/db';
+import { config } from './constants/apiConstants';
 
-connectDB()
-const app: Express = express()
-const port = process.env.PORT
+connectDB();
+const app: Express = express();
+const port = process.env.PORT;
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.use('/api/trackers', require('./routes/trackerRoutes'))
+app.use('/api/trackers', require('./routes/trackerRoutes'));
 
-app.use(errorHandler)
+app.use(errorHandler);
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)
-})
-
-// For some reason these comments cannot be removed without breaking everything. 
-// console.log(formattedToday)
-
-// Types of sales to consider
-// On sale
-// 2 for x
-// limit
+});
 
 const fetchItems = async (item: string) => {
     const API = `https://api.pcexpress.ca/product-facade/v4/products/${item}?lang=en&date=${ddmmyyyy}&pickupType=STORE&storeId=1514&banner=superstore`
@@ -80,5 +72,5 @@ const items: string[] = [
 
 items.map((item) => {
     fetchItems(item)
-})
+});
 
