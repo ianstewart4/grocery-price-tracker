@@ -16,8 +16,10 @@ exports.connectDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const conn = yield mongoose_1.default.connect(process.env.DB_STRING);
-        console.log(`Database connected: ${conn.connection.host}`.cyan.underline);
+        const word = process.env.DB_STRING;
+        const conn = yield mongoose_1.default.connect(word);
+        // console.log(conn)
+        console.log(`Database connected: ${conn.connection.host}`);
     }
     catch (error) {
         console.log(error);

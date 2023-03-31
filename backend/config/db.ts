@@ -2,9 +2,11 @@ import mongoose from 'mongoose'
 
 export const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.DB_STRING)
+        const word: string = process.env.DB_STRING!
+        const conn = await mongoose.connect(word)
+        // console.log(conn)
 
-        console.log(`Database connected: ${conn.connection.host}`.cyan.underline)
+        console.log(`Database connected: ${conn.connection.host}`)
     } catch (error) {
         console.log(error)
         process.exit(1)

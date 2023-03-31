@@ -3,10 +3,12 @@ const colors = require('colors')
 import dotenv from 'dotenv'
 import { errorHandler } from './middleware/errorMiddleware'
 import axios from 'axios'
+import { ddmmyyyy } from './constants/dateConstants'
 
 dotenv.config()
 
 import { connectDB } from './config/db'
+import { config } from './constants/apiConstants'
 
 connectDB()
 const app: Express = express()
@@ -23,24 +25,7 @@ app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`)
 })
 
-const config: {} = {
-    headers: {
-        'x-apikey': process.env.API_KEY,
-    },
-}
-
-// Getting DDMMYYY formatted date for API requirement
-
-const today = new Date();
-const yyyy = today.getFullYear();
-let mm: number = today.getMonth() + 1; // Months start at 0!
-let dd: number = today.getDate();
-
-if (dd < 10) dd = '0' + dd;
-if (mm < 10) mm = '0' + mm;
-
-const formattedToday = dd + mm + yyyy;
-
+// For some reason these comments cannot be removed without breaking everything. 
 // console.log(formattedToday)
 
 // Types of sales to consider
@@ -48,9 +33,8 @@ const formattedToday = dd + mm + yyyy;
 // 2 for x
 // limit
 
-
 const fetchItems = async (item: string) => {
-    const API = `https://api.pcexpress.ca/product-facade/v4/products/${item}?lang=en&date=${formattedToday}&pickupType=STORE&storeId=1514&banner=superstore`
+    const API = `https://api.pcexpress.ca/product-facade/v4/products/${item}?lang=en&date=${ddmmyyyy}&pickupType=STORE&storeId=1514&banner=superstore`
     try {
         const response = await axios.get(API, config)
         const itemImageURL: string = response.data.imageAssets[0].mediumUrl
