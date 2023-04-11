@@ -37,20 +37,46 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
             // // Need to figure out what kinds of prices go here. It would be ideal to return a number 
             // const salePrice: string | number = response.data.offers[0].badges.dealBadge?.text ?? '[SALE PRICE WOULD GO HERE]'
             // // const saleUnitPrice
-            // const saleEndDate: Date | string = response.data.offers[0].badges.dealBadge?.expiryDate ?? ''
+            const price: number = response.data.offers[0].price.value
+            const saleType: string | null = response.data.offers[0].badges.dealBadge?.type
+            const saleText: string | null = response.data.offers[0].badges.dealBadge?.text ?? null
+            let salePrice: number | null = null
+            let sale: number | null = null
+            let multiQty: number | null = null
+            let limitQty: number | null = null
+
+            if (saleType === 'MULTI') {
+                multiQty = Number(saleText?.split(' ')[0])
+                salePrice = Number(saleText?.split(' ')[2].slice(1)) / multiQty
+                sale = price - salePrice
+            } else if (saleType === 'LIMIT') {
+                limitQty = Number(saleText?.split(' ')[2])
+                salePrice = Number(saleText?.split(' ')[0].slice(1))
+                sale = price - salePrice
+            } else if (saleType === 'SALE') {
+                // @ts-ignore
+                sale = Number(saleText.slice(6))
+                salePrice = price - sale
+            }
 
             const product = await Product.create({
                 productID: response.data.code,
                 brandName: response.data.brand ?? '',
                 itemName: response.data.name,
-                price: response.data.offers[0].price.value,
+                price,
+                date: new Date(),
                 imageURL: response.data.imageAssets[0].mediumUrl,
                 link: `https://www.realcanadiansuperstore.ca${response.data.link}`,
-                packageSize: Number(response.data.packageSize.split(' ')[0]),
+                packageSize: response.data.packageSize,
                 uom: response.data.uom,
                 onSale: response.data.offers[0].badges.dealBadge ? true : false,
-                saleType: response.data.offers[0].badges.dealBadge?.type ?? 'none',
-                saleText: response.data.offers[0].badges.dealBadge?.text ?? 'none',
+                saleType: response.data.offers[0].badges.dealBadge?.type ?? null,
+                saleText: response.data.offers[0].badges.dealBadge?.text ?? null,
+                saleEndDate: response.data.offers[0].badges.dealBadge?.expiryDate ?? null,
+                salePrice,
+                sale,
+                multiQty,
+                limitQty,
             })
             res.status(200).json(product)
 

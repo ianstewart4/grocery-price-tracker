@@ -29,7 +29,7 @@ exports.getProducts = (0, express_async_handler_1.default)((req, res) => __await
 // @route   POST /api/Products
 // @access  Private
 exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     if (!req.body.productID) {
         res.status(400);
         throw new Error('It is not receiving the productID');
@@ -45,19 +45,46 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
             // // Need to figure out what kinds of prices go here. It would be ideal to return a number 
             // const salePrice: string | number = response.data.offers[0].badges.dealBadge?.text ?? '[SALE PRICE WOULD GO HERE]'
             // // const saleUnitPrice
-            // const saleEndDate: Date | string = response.data.offers[0].badges.dealBadge?.expiryDate ?? ''
+            const price = response.data.offers[0].price.value;
+            const saleType = (_a = response.data.offers[0].badges.dealBadge) === null || _a === void 0 ? void 0 : _a.type;
+            const saleText = (_c = (_b = response.data.offers[0].badges.dealBadge) === null || _b === void 0 ? void 0 : _b.text) !== null && _c !== void 0 ? _c : null;
+            let salePrice = null;
+            let sale = null;
+            let multiQty = null;
+            let limitQty = null;
+            if (saleType === 'MULTI') {
+                multiQty = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[0]);
+                salePrice = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[2].slice(1)) / multiQty;
+                sale = price - salePrice;
+            }
+            else if (saleType === 'LIMIT') {
+                limitQty = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[2]);
+                salePrice = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[0].slice(1));
+                sale = price - salePrice;
+            }
+            else if (saleType === 'SALE') {
+                // @ts-ignore
+                sale = Number(saleText.slice(6));
+                salePrice = price - sale;
+            }
             const product = yield productModel_1.Product.create({
                 productID: response.data.code,
-                brandName: (_a = response.data.brand) !== null && _a !== void 0 ? _a : '',
+                brandName: (_d = response.data.brand) !== null && _d !== void 0 ? _d : '',
                 itemName: response.data.name,
-                price: response.data.offers[0].price.value,
+                price,
+                date: new Date(),
                 imageURL: response.data.imageAssets[0].mediumUrl,
                 link: `https://www.realcanadiansuperstore.ca${response.data.link}`,
-                packageSize: Number(response.data.packageSize.split(' ')[0]),
+                packageSize: response.data.packageSize,
                 uom: response.data.uom,
                 onSale: response.data.offers[0].badges.dealBadge ? true : false,
-                saleType: (_c = (_b = response.data.offers[0].badges.dealBadge) === null || _b === void 0 ? void 0 : _b.type) !== null && _c !== void 0 ? _c : 'none',
-                saleText: (_e = (_d = response.data.offers[0].badges.dealBadge) === null || _d === void 0 ? void 0 : _d.text) !== null && _e !== void 0 ? _e : 'none',
+                saleType: (_f = (_e = response.data.offers[0].badges.dealBadge) === null || _e === void 0 ? void 0 : _e.type) !== null && _f !== void 0 ? _f : null,
+                saleText: (_h = (_g = response.data.offers[0].badges.dealBadge) === null || _g === void 0 ? void 0 : _g.text) !== null && _h !== void 0 ? _h : null,
+                saleEndDate: (_k = (_j = response.data.offers[0].badges.dealBadge) === null || _j === void 0 ? void 0 : _j.expiryDate) !== null && _k !== void 0 ? _k : null,
+                salePrice,
+                sale,
+                multiQty,
+                limitQty,
             });
             res.status(200).json(product);
         }
