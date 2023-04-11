@@ -34,16 +34,36 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
             // const unitSize: number = response.data.offers[0].comparisonPrices[0].quantity // The denominator for the per unit price eg. 100ml
             // const unitPrice: number = Number((price / (pkgSize / unitSize)).toFixed(2))
 
-            // // Need to figure out what kinds of prices go here. It would be ideal to return a number 
-            // const salePrice: string | number = response.data.offers[0].badges.dealBadge?.text ?? '[SALE PRICE WOULD GO HERE]'
-            // // const saleUnitPrice
-            const price: number = response.data.offers[0].price.value
-            const saleType: string | null = response.data.offers[0].badges.dealBadge?.type
-            const saleText: string | null = response.data.offers[0].badges.dealBadge?.text ?? null
-            let salePrice: number | null = null
-            let sale: number | null = null
-            let multiQty: number | null = null
-            let limitQty: number | null = null
+            // PRODUCT INFO
+            const productID: string = response.data.code;
+            const brandName: string = response.data.brand ?? '';
+            const itemName: string = response.data.name;
+            const date: Date = new Date();
+            const imageURL: string = response.data.imageAssets[0].mediumUrl;
+            const link: string = `https://www.realcanadiansuperstore.ca${response.data.link}`;
+            const price: number = response.data.offers[0].price.value;
+
+            // PACKAGE INFO
+            const packageSizeText = response.data.packageSize;
+            const packageSizeNum: number = Number(packageSizeText.split(' ')[0]);
+            const packageUnits: string = packageSizeText.split(' ')[1];
+
+            const uom = response.data.uom;
+
+            // COMPARISON INFO
+            const compQty: number = response.data.offers[0].comparisonPrices[0].quantity; // WILL THEY ALWAYS HAVE THIS?
+            const divisor: number = packageSizeNum / compQty;
+            const unitPrice: number = price / divisor;
+
+            // SALE INFO
+            const onSale = response.data.offers[0].badges.dealBadge ? true : false;
+            const saleEndDate = response.data.offers[0].badges.dealBadge?.expiryDate ?? null;
+            const saleType: string | null = response.data.offers[0].badges.dealBadge?.type;
+            const saleText: string | null = response.data.offers[0].badges.dealBadge?.text ?? null;
+            let salePrice: number | null = null;
+            let sale: number | null = null;
+            let multiQty: number | null = null;
+            let limitQty: number | null = null;
 
             if (saleType === 'MULTI') {
                 multiQty = Number(saleText?.split(' ')[0])
@@ -59,20 +79,27 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
                 salePrice = price - sale
             }
 
+            const saleUnitPrice: number | null = salePrice ? salePrice / divisor : null;
+
             const product = await Product.create({
-                productID: response.data.code,
-                brandName: response.data.brand ?? '',
-                itemName: response.data.name,
+                productID,
+                brandName,
+                itemName,
                 price,
-                date: new Date(),
-                imageURL: response.data.imageAssets[0].mediumUrl,
-                link: `https://www.realcanadiansuperstore.ca${response.data.link}`,
-                packageSize: response.data.packageSize,
-                uom: response.data.uom,
-                onSale: response.data.offers[0].badges.dealBadge ? true : false,
-                saleType: response.data.offers[0].badges.dealBadge?.type ?? null,
-                saleText: response.data.offers[0].badges.dealBadge?.text ?? null,
-                saleEndDate: response.data.offers[0].badges.dealBadge?.expiryDate ?? null,
+                unitPrice,
+                saleUnitPrice,
+                compQty,
+                packageUnits,
+                packageSizeText,
+                packageSizeNum,
+                date,
+                imageURL,
+                link,
+                uom,
+                onSale,
+                saleType,
+                saleText,
+                saleEndDate,
                 salePrice,
                 sale,
                 multiQty,
@@ -82,7 +109,7 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
 
         } catch (err) {
             console.log(err)
-            console.log('This item is not currently available')
+            console.log('This code is invalid or item is not currently available at this location')
         }
     } else {
         res.status(200).json(existingItem)

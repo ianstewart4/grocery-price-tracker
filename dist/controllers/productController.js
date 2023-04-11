@@ -29,7 +29,7 @@ exports.getProducts = (0, express_async_handler_1.default)((req, res) => __await
 // @route   POST /api/Products
 // @access  Private
 exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a, _b, _c, _d, _e, _f;
     if (!req.body.productID) {
         res.status(400);
         throw new Error('It is not receiving the productID');
@@ -42,12 +42,28 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
             const response = yield axios_1.default.get(API, apiConstants_1.config);
             // const unitSize: number = response.data.offers[0].comparisonPrices[0].quantity // The denominator for the per unit price eg. 100ml
             // const unitPrice: number = Number((price / (pkgSize / unitSize)).toFixed(2))
-            // // Need to figure out what kinds of prices go here. It would be ideal to return a number 
-            // const salePrice: string | number = response.data.offers[0].badges.dealBadge?.text ?? '[SALE PRICE WOULD GO HERE]'
-            // // const saleUnitPrice
+            // PRODUCT INFO
+            const productID = response.data.code;
+            const brandName = (_a = response.data.brand) !== null && _a !== void 0 ? _a : '';
+            const itemName = response.data.name;
+            const date = new Date();
+            const imageURL = response.data.imageAssets[0].mediumUrl;
+            const link = `https://www.realcanadiansuperstore.ca${response.data.link}`;
             const price = response.data.offers[0].price.value;
-            const saleType = (_a = response.data.offers[0].badges.dealBadge) === null || _a === void 0 ? void 0 : _a.type;
-            const saleText = (_c = (_b = response.data.offers[0].badges.dealBadge) === null || _b === void 0 ? void 0 : _b.text) !== null && _c !== void 0 ? _c : null;
+            // PACKAGE INFO
+            const packageSizeText = response.data.packageSize;
+            const packageSizeNum = Number(packageSizeText.split(' ')[0]);
+            const packageUnits = packageSizeText.split(' ')[1];
+            const uom = response.data.uom;
+            // COMPARISON INFO
+            const compQty = response.data.offers[0].comparisonPrices[0].quantity; // WILL THEY ALWAYS HAVE THIS?
+            const divisor = packageSizeNum / compQty;
+            const unitPrice = price / divisor;
+            // SALE INFO
+            const onSale = response.data.offers[0].badges.dealBadge ? true : false;
+            const saleEndDate = (_c = (_b = response.data.offers[0].badges.dealBadge) === null || _b === void 0 ? void 0 : _b.expiryDate) !== null && _c !== void 0 ? _c : null;
+            const saleType = (_d = response.data.offers[0].badges.dealBadge) === null || _d === void 0 ? void 0 : _d.type;
+            const saleText = (_f = (_e = response.data.offers[0].badges.dealBadge) === null || _e === void 0 ? void 0 : _e.text) !== null && _f !== void 0 ? _f : null;
             let salePrice = null;
             let sale = null;
             let multiQty = null;
@@ -67,20 +83,26 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
                 sale = Number(saleText.slice(6));
                 salePrice = price - sale;
             }
+            const saleUnitPrice = salePrice ? salePrice / divisor : null;
             const product = yield productModel_1.Product.create({
-                productID: response.data.code,
-                brandName: (_d = response.data.brand) !== null && _d !== void 0 ? _d : '',
-                itemName: response.data.name,
+                productID,
+                brandName,
+                itemName,
                 price,
-                date: new Date(),
-                imageURL: response.data.imageAssets[0].mediumUrl,
-                link: `https://www.realcanadiansuperstore.ca${response.data.link}`,
-                packageSize: response.data.packageSize,
-                uom: response.data.uom,
-                onSale: response.data.offers[0].badges.dealBadge ? true : false,
-                saleType: (_f = (_e = response.data.offers[0].badges.dealBadge) === null || _e === void 0 ? void 0 : _e.type) !== null && _f !== void 0 ? _f : null,
-                saleText: (_h = (_g = response.data.offers[0].badges.dealBadge) === null || _g === void 0 ? void 0 : _g.text) !== null && _h !== void 0 ? _h : null,
-                saleEndDate: (_k = (_j = response.data.offers[0].badges.dealBadge) === null || _j === void 0 ? void 0 : _j.expiryDate) !== null && _k !== void 0 ? _k : null,
+                unitPrice,
+                saleUnitPrice,
+                compQty,
+                packageUnits,
+                packageSizeText,
+                packageSizeNum,
+                date,
+                imageURL,
+                link,
+                uom,
+                onSale,
+                saleType,
+                saleText,
+                saleEndDate,
                 salePrice,
                 sale,
                 multiQty,
@@ -90,7 +112,7 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
         }
         catch (err) {
             console.log(err);
-            console.log('This item is not currently available');
+            console.log('This code is invalid or item is not currently available at this location');
         }
     }
     else {
