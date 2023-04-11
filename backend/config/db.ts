@@ -4,8 +4,6 @@ export const connectDB = async () => {
     try {
         const word: string = process.env.DB_STRING!
         const conn = await mongoose.connect(word)
-        // console.log(conn)
-
         console.log(`Database connected: ${conn.connection.host}`)
     } catch (error) {
         console.log(error)

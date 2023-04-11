@@ -18,7 +18,6 @@ const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const word = process.env.DB_STRING;
         const conn = yield mongoose_1.default.connect(word);
-        // console.log(conn)
         console.log(`Database connected: ${conn.connection.host}`);
     }
     catch (error) {
