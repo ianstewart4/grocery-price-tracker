@@ -62,6 +62,7 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
             let multiQty: number | null = null;
             let limitQty: number | null = null;
 
+            // SALE INFO BY SALE TYPE
             if (saleType === 'MULTI') {
                 multiQty = Number(saleText?.split(' ')[0])
                 salePrice = Number(saleText?.split(' ')[2].slice(1)) / multiQty
@@ -206,6 +207,7 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response) =>
 
         try {
             const updatedProduct = await Product.findByIdAndUpdate(req.params.id, productDetails)
+            console.log(typeof updatedProduct)
             console.log('Updating product')
             res.status(200).json(updatedProduct)
         } catch (err) {
@@ -224,5 +226,14 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response) =>
 // @access  Private
 
 export const deleteProduct = asyncHandler(async (req: Request, res: Response) => {
-    res.json({ message: `Delete Product ${req.params.id}` })
+    const product = await Product.findById(req.params.id)
+
+    if (!product) {
+        res.status(400)
+        throw new Error('Product not found')
+    }
+
+    await product.deleteOne()
+
+    res.json({ message: `Deleted Product ${req.params.id}` })
 })

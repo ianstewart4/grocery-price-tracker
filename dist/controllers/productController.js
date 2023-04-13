@@ -66,6 +66,7 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
             let saleValue = null;
             let multiQty = null;
             let limitQty = null;
+            // SALE INFO BY SALE TYPE
             if (saleType === 'MULTI') {
                 multiQty = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[0]);
                 salePrice = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[2].slice(1)) / multiQty;
@@ -201,6 +202,7 @@ exports.updateProduct = (0, express_async_handler_1.default)((req, res) => __awa
         };
         try {
             const updatedProduct = yield productModel_1.Product.findByIdAndUpdate(req.params.id, productDetails);
+            console.log(typeof updatedProduct);
             console.log('Updating product');
             res.status(200).json(updatedProduct);
         }
@@ -218,5 +220,11 @@ exports.updateProduct = (0, express_async_handler_1.default)((req, res) => __awa
 // @route   DELETE /api/Products/:id
 // @access  Private
 exports.deleteProduct = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.json({ message: `Delete Product ${req.params.id}` });
+    const product = yield productModel_1.Product.findById(req.params.id);
+    if (!product) {
+        res.status(400);
+        throw new Error('Product not found');
+    }
+    yield product.deleteOne();
+    res.json({ message: `Deleted Product ${req.params.id}` });
 }));
