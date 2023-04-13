@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler"
 import { Request, Response } from 'express'
-import { Product } from '../models/productModel'
+import { IProduct, Product } from '../models/productModel'
 import axios from "axios"
 import { ddmmyyyy } from '../constants/dateConstants';
 import { config } from '../constants/apiConstants';
@@ -14,7 +14,7 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     res.status(200).json(products)
 })
 
-// @desc    Set Products
+// @desc    Set Product
 // @route   POST /api/Products
 // @access  Private
 
@@ -22,17 +22,15 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
 
     if (!req.body.productID) {
         res.status(400)
-        throw new Error('It is not receiving the productID')
+        throw new Error('Please enter a productID')
     }
     const { productID } = req.body
 
     const existingItem = await Product.findOne({ productID: productID })
-    if (!existingItem || existingItem) { // UPDATE CONDITION ONCE COMPLETE
+    if (!existingItem) {
         const API = `https://api.pcexpress.ca/product-facade/v4/products/${productID}?lang=en&date=${ddmmyyyy}&pickupType=STORE&storeId=1514&banner=superstore`
         try {
             const response = await axios.get(API, config)
-            // const unitSize: number = response.data.offers[0].comparisonPrices[0].quantity // The denominator for the per unit price eg. 100ml
-            // const unitPrice: number = Number((price / (pkgSize / unitSize)).toFixed(2))
 
             // PRODUCT INFO
             const productID: string = response.data.code;
@@ -44,11 +42,10 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
             const price: number = response.data.offers[0].price.value;
 
             // PACKAGE INFO
-            const packageSizeText = response.data.packageSize;
+            const packageSizeText: string = response.data.packageSize;
             const packageSizeNum: number = Number(packageSizeText.split(' ')[0]);
             const packageUnits: string = packageSizeText.split(' ')[1];
-
-            const uom = response.data.uom;
+            const uom: string = response.data.uom;
 
             // COMPARISON INFO
             const compQty: number = response.data.offers[0].comparisonPrices[0].quantity; // WILL THEY ALWAYS HAVE THIS?
@@ -56,32 +53,32 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
             const unitPrice: number = price / divisor;
 
             // SALE INFO
-            const onSale = response.data.offers[0].badges.dealBadge ? true : false;
-            const saleEndDate = response.data.offers[0].badges.dealBadge?.expiryDate ?? null;
+            const onSale: boolean = response.data.offers[0].badges.dealBadge ? true : false;
+            const saleEndDate: Date = response.data.offers[0].badges.dealBadge?.expiryDate ?? null;
             const saleType: string | null = response.data.offers[0].badges.dealBadge?.type;
             const saleText: string | null = response.data.offers[0].badges.dealBadge?.text ?? null;
             let salePrice: number | null = null;
-            let sale: number | null = null;
+            let saleValue: number | null = null;
             let multiQty: number | null = null;
             let limitQty: number | null = null;
 
             if (saleType === 'MULTI') {
                 multiQty = Number(saleText?.split(' ')[0])
                 salePrice = Number(saleText?.split(' ')[2].slice(1)) / multiQty
-                sale = price - salePrice
+                saleValue = price - salePrice
             } else if (saleType === 'LIMIT') {
                 limitQty = Number(saleText?.split(' ')[2])
                 salePrice = Number(saleText?.split(' ')[0].slice(1))
-                sale = price - salePrice
+                saleValue = price - salePrice
             } else if (saleType === 'SALE') {
                 // @ts-ignore
-                sale = Number(saleText.slice(6))
-                salePrice = price - sale
+                saleValue = Number(saleText.slice(6))
+                salePrice = price - saleValue
             }
 
             const saleUnitPrice: number | null = salePrice ? salePrice / divisor : null;
 
-            const product = await Product.create({
+            const product: IProduct = await Product.create({
                 productID,
                 brandName,
                 itemName,
@@ -101,10 +98,11 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
                 saleText,
                 saleEndDate,
                 salePrice,
-                sale,
+                saleValue,
                 multiQty,
                 limitQty,
             })
+            console.log('Adding new product')
             res.status(200).json(product)
 
         } catch (err) {
@@ -112,6 +110,7 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
             console.log('This code is invalid or item is not currently available at this location')
         }
     } else {
+        console.log('This product already exists')
         res.status(200).json(existingItem)
     }
 })
@@ -121,7 +120,103 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
 // @access  Private
 
 export const updateProduct = asyncHandler(async (req: Request, res: Response) => {
-    res.json({ message: `Update Product ${req.params.id}` })
+    const product = await Product.findById(req.params.id)
+
+    if (!product) {
+        res.status(400)
+        throw new Error('Product not found')
+    }
+
+    const productID = product.productID
+
+    const API = `https://api.pcexpress.ca/product-facade/v4/products/${productID}?lang=en&date=${ddmmyyyy}&pickupType=STORE&storeId=1514&banner=superstore`
+    try {
+        const response = await axios.get(API, config);
+
+        // PRODUCT INFO
+        const productID: string = response.data.code;
+        const brandName: string = response.data.brand ?? '';
+        const itemName: string = response.data.name;
+        const date: Date = new Date();
+        const imageURL: string = response.data.imageAssets[0].mediumUrl;
+        const link: string = `https://www.realcanadiansuperstore.ca${response.data.link}`;
+        const price: number = response.data.offers[0].price.value;
+
+        // PACKAGE INFO
+        const packageSizeText: string = response.data.packageSize;
+        const packageSizeNum: number = Number(packageSizeText.split(' ')[0]);
+        const packageUnits: string = packageSizeText.split(' ')[1];
+        const uom: string = response.data.uom;
+
+        // COMPARISON INFO
+        const compQty: number = response.data.offers[0].comparisonPrices[0].quantity; // WILL THEY ALWAYS HAVE THIS?
+        const divisor: number = packageSizeNum / compQty;
+        const unitPrice: number = price / divisor;
+
+        // SALE INFO
+        const onSale: boolean = response.data.offers[0].badges.dealBadge ? true : false;
+        const saleEndDate: Date = response.data.offers[0].badges.dealBadge?.expiryDate ?? null;
+        const saleType: string | null = response.data.offers[0].badges.dealBadge?.type;
+        const saleText: string | null = response.data.offers[0].badges.dealBadge?.text ?? null;
+        let salePrice: number | null = null;
+        let saleValue: number | null = null;
+        let multiQty: number | null = null;
+        let limitQty: number | null = null;
+
+        if (saleType === 'MULTI') {
+            multiQty = Number(saleText?.split(' ')[0])
+            salePrice = Number(saleText?.split(' ')[2].slice(1)) / multiQty
+            saleValue = price - salePrice
+        } else if (saleType === 'LIMIT') {
+            limitQty = Number(saleText?.split(' ')[2])
+            salePrice = Number(saleText?.split(' ')[0].slice(1))
+            saleValue = price - salePrice
+        } else if (saleType === 'SALE') {
+            // @ts-ignore
+            saleValue = Number(saleText.slice(6))
+            salePrice = price - saleValue
+        }
+
+        const saleUnitPrice: number | null = salePrice ? salePrice / divisor : null;
+
+        const productDetails = {
+            productID,
+            brandName,
+            itemName,
+            price,
+            unitPrice,
+            saleUnitPrice,
+            compQty,
+            packageUnits,
+            packageSizeText,
+            packageSizeNum,
+            date,
+            imageURL,
+            link,
+            uom,
+            onSale,
+            saleType,
+            saleText,
+            saleEndDate,
+            salePrice,
+            saleValue,
+            multiQty,
+            limitQty,
+        }
+
+        try {
+            const updatedProduct = await Product.findByIdAndUpdate(req.params.id, productDetails)
+            console.log('Updating product')
+            res.status(200).json(updatedProduct)
+        } catch (err) {
+            res.status(400).json({ message: 'Failed to complete request' })
+            throw new Error('Failed to complete request')
+        }
+
+    } catch (err) {
+        console.log(err)
+        console.log('This item is not currently available at this location')
+    }
 })
 
 // @desc    Delete Products

@@ -25,23 +25,21 @@ exports.getProducts = (0, express_async_handler_1.default)((req, res) => __await
     const products = yield productModel_1.Product.find();
     res.status(200).json(products);
 }));
-// @desc    Set Products
+// @desc    Set Product
 // @route   POST /api/Products
 // @access  Private
 exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f;
     if (!req.body.productID) {
         res.status(400);
-        throw new Error('It is not receiving the productID');
+        throw new Error('Please enter a productID');
     }
     const { productID } = req.body;
     const existingItem = yield productModel_1.Product.findOne({ productID: productID });
-    if (!existingItem || existingItem) { // UPDATE CONDITION ONCE COMPLETE
+    if (!existingItem) {
         const API = `https://api.pcexpress.ca/product-facade/v4/products/${productID}?lang=en&date=${dateConstants_1.ddmmyyyy}&pickupType=STORE&storeId=1514&banner=superstore`;
         try {
             const response = yield axios_1.default.get(API, apiConstants_1.config);
-            // const unitSize: number = response.data.offers[0].comparisonPrices[0].quantity // The denominator for the per unit price eg. 100ml
-            // const unitPrice: number = Number((price / (pkgSize / unitSize)).toFixed(2))
             // PRODUCT INFO
             const productID = response.data.code;
             const brandName = (_a = response.data.brand) !== null && _a !== void 0 ? _a : '';
@@ -65,23 +63,23 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
             const saleType = (_d = response.data.offers[0].badges.dealBadge) === null || _d === void 0 ? void 0 : _d.type;
             const saleText = (_f = (_e = response.data.offers[0].badges.dealBadge) === null || _e === void 0 ? void 0 : _e.text) !== null && _f !== void 0 ? _f : null;
             let salePrice = null;
-            let sale = null;
+            let saleValue = null;
             let multiQty = null;
             let limitQty = null;
             if (saleType === 'MULTI') {
                 multiQty = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[0]);
                 salePrice = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[2].slice(1)) / multiQty;
-                sale = price - salePrice;
+                saleValue = price - salePrice;
             }
             else if (saleType === 'LIMIT') {
                 limitQty = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[2]);
                 salePrice = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[0].slice(1));
-                sale = price - salePrice;
+                saleValue = price - salePrice;
             }
             else if (saleType === 'SALE') {
                 // @ts-ignore
-                sale = Number(saleText.slice(6));
-                salePrice = price - sale;
+                saleValue = Number(saleText.slice(6));
+                salePrice = price - saleValue;
             }
             const saleUnitPrice = salePrice ? salePrice / divisor : null;
             const product = yield productModel_1.Product.create({
@@ -104,10 +102,11 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
                 saleText,
                 saleEndDate,
                 salePrice,
-                sale,
+                saleValue,
                 multiQty,
                 limitQty,
             });
+            console.log('Adding new product');
             res.status(200).json(product);
         }
         catch (err) {
@@ -116,6 +115,7 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
         }
     }
     else {
+        console.log('This product already exists');
         res.status(200).json(existingItem);
     }
 }));
@@ -123,7 +123,96 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
 // @route   PUT /api/Products/:id
 // @access  Private
 exports.updateProduct = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.json({ message: `Update Product ${req.params.id}` });
+    var _g, _h, _j, _k, _l, _m;
+    const product = yield productModel_1.Product.findById(req.params.id);
+    if (!product) {
+        res.status(400);
+        throw new Error('Product not found');
+    }
+    const productID = product.productID;
+    const API = `https://api.pcexpress.ca/product-facade/v4/products/${productID}?lang=en&date=${dateConstants_1.ddmmyyyy}&pickupType=STORE&storeId=1514&banner=superstore`;
+    try {
+        const response = yield axios_1.default.get(API, apiConstants_1.config);
+        // PRODUCT INFO
+        const productID = response.data.code;
+        const brandName = (_g = response.data.brand) !== null && _g !== void 0 ? _g : '';
+        const itemName = response.data.name;
+        const date = new Date();
+        const imageURL = response.data.imageAssets[0].mediumUrl;
+        const link = `https://www.realcanadiansuperstore.ca${response.data.link}`;
+        const price = response.data.offers[0].price.value;
+        // PACKAGE INFO
+        const packageSizeText = response.data.packageSize;
+        const packageSizeNum = Number(packageSizeText.split(' ')[0]);
+        const packageUnits = packageSizeText.split(' ')[1];
+        const uom = response.data.uom;
+        // COMPARISON INFO
+        const compQty = response.data.offers[0].comparisonPrices[0].quantity; // WILL THEY ALWAYS HAVE THIS?
+        const divisor = packageSizeNum / compQty;
+        const unitPrice = price / divisor;
+        // SALE INFO
+        const onSale = response.data.offers[0].badges.dealBadge ? true : false;
+        const saleEndDate = (_j = (_h = response.data.offers[0].badges.dealBadge) === null || _h === void 0 ? void 0 : _h.expiryDate) !== null && _j !== void 0 ? _j : null;
+        const saleType = (_k = response.data.offers[0].badges.dealBadge) === null || _k === void 0 ? void 0 : _k.type;
+        const saleText = (_m = (_l = response.data.offers[0].badges.dealBadge) === null || _l === void 0 ? void 0 : _l.text) !== null && _m !== void 0 ? _m : null;
+        let salePrice = null;
+        let saleValue = null;
+        let multiQty = null;
+        let limitQty = null;
+        if (saleType === 'MULTI') {
+            multiQty = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[0]);
+            salePrice = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[2].slice(1)) / multiQty;
+            saleValue = price - salePrice;
+        }
+        else if (saleType === 'LIMIT') {
+            limitQty = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[2]);
+            salePrice = Number(saleText === null || saleText === void 0 ? void 0 : saleText.split(' ')[0].slice(1));
+            saleValue = price - salePrice;
+        }
+        else if (saleType === 'SALE') {
+            // @ts-ignore
+            saleValue = Number(saleText.slice(6));
+            salePrice = price - saleValue;
+        }
+        const saleUnitPrice = salePrice ? salePrice / divisor : null;
+        const productDetails = {
+            productID,
+            brandName,
+            itemName,
+            price,
+            unitPrice,
+            saleUnitPrice,
+            compQty,
+            packageUnits,
+            packageSizeText,
+            packageSizeNum,
+            date,
+            imageURL,
+            link,
+            uom,
+            onSale,
+            saleType,
+            saleText,
+            saleEndDate,
+            salePrice,
+            saleValue,
+            multiQty,
+            limitQty,
+        };
+        try {
+            const updatedProduct = yield productModel_1.Product.findByIdAndUpdate(req.params.id, productDetails);
+            console.log('Updating product');
+            res.status(200).json(updatedProduct);
+        }
+        catch (err) {
+            res.status(400).json({ message: 'Failed to complete request' });
+            throw new Error('Failed to complete request');
+        }
+    }
+    catch (err) {
+        console.log(err);
+        console.log('This item is not currently available at this location');
+    }
 }));
 // @desc    Delete Products
 // @route   DELETE /api/Products/:id
