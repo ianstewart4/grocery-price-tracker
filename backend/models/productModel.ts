@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-interface IProduct {
+export interface IProduct {
     productID: string;
     brandName: string;
     itemName: string;
@@ -20,7 +20,7 @@ interface IProduct {
     saleText: string | null;
     saleEndDate: Date | null;
     salePrice: number | null;
-    sale: number | null;
+    saleValue: number | null;
     multiQty: number | null;
     limitQty: number | null;
 }
@@ -45,7 +45,7 @@ const productSchema = new Schema<IProduct>({
     saleText: { type: String || null },
     saleEndDate: { type: Date || null },
     salePrice: { type: Number || null },
-    sale: { type: Number || null },
+    saleValue: { type: Number || null },
     multiQty: { type: Number || null },
     limitQty: { type: Number || null },
 }, {

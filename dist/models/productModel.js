@@ -22,7 +22,7 @@ const productSchema = new mongoose_1.Schema({
     saleText: { type: String || null },
     saleEndDate: { type: Date || null },
     salePrice: { type: Number || null },
-    sale: { type: Number || null },
+    saleValue: { type: Number || null },
     multiQty: { type: Number || null },
     limitQty: { type: Number || null },
 }, {
