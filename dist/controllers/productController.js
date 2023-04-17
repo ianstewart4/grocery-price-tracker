@@ -22,7 +22,7 @@ const apiConstants_1 = require("../constants/apiConstants");
 // @route   GET /api/Products
 // @access  Private
 exports.getProducts = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const products = yield productModel_1.Product.find();
+    const products = yield productModel_1.Product.find({ user: req.user.id });
     res.status(200).json(products);
 }));
 // @desc    Set Product
@@ -201,6 +201,13 @@ exports.updateProduct = (0, express_async_handler_1.default)((req, res) => __awa
             limitQty,
         };
         try {
+            // // Check if price or onSale has changed
+            // if (product.onSale !== onSale || product.price !== price) {
+            //     // If yes, add new priceHistory price and date
+            // } else {
+            //     // If no, update priceHistory date
+            //     const updatedPriceHistory = await PriceHistory.findByIdAndUpdate(req.params.id, { })
+            // }
             const updatedProduct = yield productModel_1.Product.findByIdAndUpdate(req.params.id, productDetails);
             console.log(typeof updatedProduct);
             console.log('Updating product');

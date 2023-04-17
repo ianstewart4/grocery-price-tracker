@@ -1,8 +1,9 @@
 import express, { Express, Request, Response, Router } from 'express'
 const router = express.Router()
 import { getProducts, setProduct, updateProduct, deleteProduct } from '../controllers/productController'
+import { protect } from '../middleware/authMiddleware'
 
-router.route('/').get(getProducts).post(setProduct)
-router.route('/:id').put(updateProduct).delete(deleteProduct)
+router.route('/').get(protect, getProducts).post(protect, setProduct)
+router.route('/:id').put(protect, updateProduct).delete(protect, deleteProduct)
 
 module.exports = router

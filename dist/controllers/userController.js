@@ -14,9 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMe = exports.loginUser = exports.registerUser = void 0;
 const jwt = require('jsonwebtoken');
-// import jwt from 'jsonwebtoken'
 const bcrypt = require('bcryptjs');
-// import bcrypt from 'bcryptjs'
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const userModel_1 = require("../models/userModel");
 // @desc    Register new user
@@ -48,6 +46,7 @@ exports.registerUser = (0, express_async_handler_1.default)((req, res) => __awai
             _id: user.id,
             name: user.name,
             email: user.email,
+            token: generateToken(user._id),
         });
     }
     else {
@@ -59,11 +58,37 @@ exports.registerUser = (0, express_async_handler_1.default)((req, res) => __awai
 // @route   POST /api/users/login
 // @access  Public
 exports.loginUser = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.json({ message: 'Login User' });
+    const { email, password } = req.body;
+    // Check for user email
+    const user = yield userModel_1.User.findOne({ email });
+    if (user && (yield bcrypt.compare(password, user.password))) {
+        res.json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            token: generateToken(user._id),
+        });
+    }
+    else {
+        res.status(400);
+        throw new Error('Invalid credentials');
+    }
 }));
 // @desc    Get user data
 // @route   GET /api/users/me
-// @access  Public
+// @access  Private
 exports.getMe = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.json({ message: 'Get Me' });
+    // @ts-ignore properties do not exist on type
+    const { _id, name, email } = yield userModel_1.User.findById(req.user.id);
+    res.status(200).json({
+        id: _id,
+        name,
+        email,
+    });
 }));
+// Generate JWT
+const generateToken = (id) => {
+    return jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: '30d'
+    });
+};

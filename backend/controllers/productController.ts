@@ -10,7 +10,7 @@ import { config } from '../constants/apiConstants';
 // @access  Private
 
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
-    const products = await Product.find()
+    const products = await Product.find({ user: req.user.id })
     res.status(200).json(products)
 })
 
@@ -206,6 +206,16 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response) =>
         }
 
         try {
+            // // Check if price or onSale has changed
+            // if (product.onSale !== onSale || product.price !== price) {
+            //     // If yes, add new priceHistory price and date
+            // } else {
+            //     // If no, update priceHistory date
+            //     const updatedPriceHistory = await PriceHistory.findByIdAndUpdate(req.params.id, { })
+            // }
+
+
+
             const updatedProduct = await Product.findByIdAndUpdate(req.params.id, productDetails)
             console.log(typeof updatedProduct)
             console.log('Updating product')
