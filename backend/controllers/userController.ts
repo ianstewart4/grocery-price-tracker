@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 const jwt = require('jsonwebtoken')
-import jwt from 'jsonwebtoken'
+// import jwt from 'jsonwebtoken'
 const bcrypt = require('bcryptjs')
-import bcrypt from 'bcryptjs'
+// import bcrypt from 'bcryptjs'
 import asyncHandler from 'express-async-handler'
 import { User } from '../models/userModel'
 
@@ -16,7 +16,36 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
         res.status(400)
         throw new Error('Please fill in all fields')
     }
-    res.json({ message: 'Register User' })
+
+    // Check if user exists
+    const userExists = await User.findOne({ email })
+
+    if (userExists) {
+        res.status(400)
+        throw new Error('User already exists')
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+
+    // Create user
+    const user = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+    })
+
+    if (user) {
+        res.status(201).json({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+        })
+    } else {
+        res.status(400)
+        throw new Error('Invalid user data')
+    }
 })
 
 // @desc    Authenticate new user
