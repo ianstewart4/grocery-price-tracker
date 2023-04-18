@@ -18,11 +18,12 @@ const productModel_1 = require("../models/productModel");
 const axios_1 = __importDefault(require("axios"));
 const dateConstants_1 = require("../constants/dateConstants");
 const apiConstants_1 = require("../constants/apiConstants");
+const priceHistoryModel_1 = require("../models/priceHistoryModel");
 // @desc    Get Products
 // @route   GET /api/Products
 // @access  Private
 exports.getProducts = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const products = yield productModel_1.Product.find({ user: req.user.id });
+    const products = yield productModel_1.Product.find({ productID: req.body.productID });
     res.status(200).json(products);
 }));
 // @desc    Set Product
@@ -82,7 +83,14 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
                 saleValue = Number(saleText.slice(6));
                 salePrice = price - saleValue;
             }
+            const currentPrice = salePrice !== null && salePrice !== void 0 ? salePrice : price;
             const saleUnitPrice = salePrice ? salePrice / divisor : null;
+            // I think this should go in the priceHistory controller but need to ensure it's called at the same time as this...
+            const priceHistory = yield priceHistoryModel_1.PriceHistory.create({
+                productID,
+                date,
+                currentPrice,
+            });
             const product = yield productModel_1.Product.create({
                 productID,
                 brandName,

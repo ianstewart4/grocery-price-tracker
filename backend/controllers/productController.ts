@@ -4,13 +4,14 @@ import { IProduct, Product } from '../models/productModel'
 import axios from "axios"
 import { ddmmyyyy } from '../constants/dateConstants';
 import { config } from '../constants/apiConstants';
+import { IPriceHistory, PriceHistory } from "../models/priceHistoryModel";
 
 // @desc    Get Products
 // @route   GET /api/Products
 // @access  Private
 
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
-    const products = await Product.find({ user: req.user.id })
+    const products = await Product.find({ productID: req.body.productID })
     res.status(200).json(products)
 })
 
@@ -77,7 +78,16 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
                 salePrice = price - saleValue
             }
 
+            const currentPrice: number = salePrice ?? price
+
             const saleUnitPrice: number | null = salePrice ? salePrice / divisor : null;
+
+            // I think this should go in the priceHistory controller but need to ensure it's called at the same time as this...
+            const priceHistory: IPriceHistory = await PriceHistory.create({
+                productID,
+                date,
+                currentPrice,
+            })
 
             const product: IProduct = await Product.create({
                 productID,
