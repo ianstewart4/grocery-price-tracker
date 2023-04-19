@@ -1,10 +1,10 @@
 import asyncHandler from "express-async-handler"
 import { Request, Response } from 'express'
 import { IProduct, Product } from '../models/productModel'
+import { IPriceHistory, PriceHistory } from "../models/priceHistoryModel";
 import axios from "axios"
 import { ddmmyyyy } from '../constants/dateConstants';
 import { config } from '../constants/apiConstants';
-import { IPriceHistory, PriceHistory } from "../models/priceHistoryModel";
 
 // @desc    Get Products
 // @route   GET /api/Products
@@ -49,7 +49,9 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
             const uom: string = response.data.uom;
 
             // COMPARISON INFO
-            const compQty: number = response.data.offers[0].comparisonPrices[0].quantity; // WILL THEY ALWAYS HAVE THIS?
+            // WILL THEY ALWAYS HAVE THIS? A: Won't always be correct
+            // TODO: Fix this so it gives accurate data 
+            const compQty: number = response.data.offers[0].comparisonPrices[0].quantity;
             const divisor: number = packageSizeNum / compQty;
             const unitPrice: number = price / divisor;
 
@@ -79,15 +81,15 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
             }
 
             const currentPrice: number = salePrice ?? price
-
+            // TODO: Fix this so it gives accurate data 
             const saleUnitPrice: number | null = salePrice ? salePrice / divisor : null;
 
             // I think this should go in the priceHistory controller but need to ensure it's called at the same time as this...
-            const priceHistory: IPriceHistory = await PriceHistory.create({
-                productID,
-                date,
-                currentPrice,
-            })
+            // const priceHistory: IPriceHistory = await PriceHistory.create({
+            //     productID,
+            //     date,
+            //     currentPrice,
+            // })
 
             const product: IProduct = await Product.create({
                 productID,

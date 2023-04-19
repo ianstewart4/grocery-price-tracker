@@ -6,7 +6,7 @@ export interface IProduct {
     itemName: string;
     price: number;
     unitPrice: number;
-    saleUnitPrice: number;
+    saleUnitPrice: number | null;
     compQty: number;
     packageUnits: string;
     packageSizeText: string;
@@ -31,7 +31,7 @@ const productSchema = new Schema<IProduct>({
     itemName: { type: String, required: true },
     price: { type: Number, required: true },
     unitPrice: { type: Number, required: true },
-    saleUnitPrice: { type: Number, required: true },
+    saleUnitPrice: { type: Number || null },
     compQty: { type: Number, require: true },
     packageUnits: { type: String, required: true },
     packageSizeText: { type: String, required: true },

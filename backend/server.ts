@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/trackers', require('./routes/trackerRoutes'));
-app.use('/api/priceHistory', require('./routes/priceHistoryRoutes'));
+// app.use('/api/priceHistory', require('./routes/priceHistoryRoutes'));
 
 app.use(errorHandler);
 
