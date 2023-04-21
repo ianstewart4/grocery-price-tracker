@@ -28,7 +28,6 @@ function Navbar() {
     "lofi",
     "pastel",
     "fantasy",
-    "wireframe", // Remove
     "black",
     "luxury",
     "dracula",
