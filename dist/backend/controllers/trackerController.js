@@ -20,9 +20,10 @@ const userModel_1 = require("../models/userModel");
 // @route   GET /api/Trackers
 // @access  Private
 exports.getTrackers = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // @ts-ignore will have to figure out a later date. Won't break
     const trackers = yield trackerModel_1.Tracker.find({ user: req.user.id });
     if (!trackers) {
-        res.status(400).json({ message: 'This user has no trackers' });
+        res.status(400).json({ message: "This user has no trackers" });
     }
     res.status(200).json(trackers);
 }));
@@ -30,12 +31,13 @@ exports.getTrackers = (0, express_async_handler_1.default)((req, res) => __await
 // @route   POST /api/Trackers
 // @access  Private
 exports.setTracker = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // @ts-ignore will have to figure out a later date. Won't break
     const user = req.user.id;
     const { productID } = req.body;
     // const alertActive = true
     if (!productID) {
         res.status(400);
-        throw new Error('Please enter a productID');
+        throw new Error("Please enter a productID");
     }
     const existingTracker = yield trackerModel_1.Tracker.findOne({ user, productID });
     if (!existingTracker) {
@@ -45,17 +47,19 @@ exports.setTracker = (0, express_async_handler_1.default)((req, res) => __awaite
                 productID,
                 // alertActive,
             });
-            console.log('Adding new tracker');
+            console.log("Adding new tracker");
             res.status(200).json(tracker);
         }
         catch (err) {
             console.log(err);
-            console.log('Something went wrong');
+            console.log("Something went wrong");
         }
     }
     else {
-        console.log('This user is already tracking this item');
-        res.status(200).json({ message: 'This user is already tracking this item' });
+        console.log("This user is already tracking this item");
+        res
+            .status(200)
+            .json({ message: "This user is already tracking this item" });
     }
 }));
 // @desc    Update Trackers
@@ -65,18 +69,19 @@ exports.updateTracker = (0, express_async_handler_1.default)((req, res) => __awa
     const tracker = yield trackerModel_1.Tracker.findById(req.params.id);
     if (!tracker) {
         res.status(400);
-        throw new Error('Tracker not found');
+        throw new Error("Tracker not found");
     }
+    // @ts-ignore will have to figure out a later date. Won't break
     const user = yield userModel_1.User.findById(req.user.id);
     // Check for user
     if (!user) {
         res.status(401);
-        throw new Error('User not found');
+        throw new Error("User not found");
     }
     // Make sure the logged in user matches the tracker user
     if (tracker.user.toString() !== user.id) {
         res.status(401);
-        throw new Error('User not authorized');
+        throw new Error("User not authorized");
     }
     // Update alertActive??
 }));
@@ -87,18 +92,19 @@ exports.deleteTracker = (0, express_async_handler_1.default)((req, res) => __awa
     const tracker = yield trackerModel_1.Tracker.findById(req.params.id);
     if (!tracker) {
         res.status(400);
-        throw new Error('Tracker not found');
+        throw new Error("Tracker not found");
     }
+    // @ts-ignore will have to figure out a later date. Won't break
     const user = yield userModel_1.User.findById(req.user.id);
     // Check for user
     if (!user) {
         res.status(401);
-        throw new Error('User not found');
+        throw new Error("User not found");
     }
     // Make sure the logged in user matches the tracker user
     if (tracker.user.toString() !== user.id) {
         res.status(401);
-        throw new Error('User not authorized');
+        throw new Error("User not authorized");
     }
     yield tracker.deleteOne();
     res.json({ message: `Deleted Tracker ${req.params.id}` });

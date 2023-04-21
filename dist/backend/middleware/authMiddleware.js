@@ -13,30 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.protect = void 0;
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const userModel_1 = require("../models/userModel");
 exports.protect = (0, express_async_handler_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let token;
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    if (req.headers.authorization &&
+        req.headers.authorization.startsWith("Bearer")) {
         try {
             // Get token header
-            token = req.headers.authorization.split(' ')[1];
+            token = req.headers.authorization.split(" ")[1];
             // Verify token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             // Get user from the token
             // @ts-ignore Property 'user' does not exist on type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
-            req.user = yield userModel_1.User.findById(decoded.id).select('-password');
+            req.user = yield userModel_1.User.findById(decoded.id).select("-password");
             next();
         }
         catch (error) {
             console.log(error);
             res.status(401);
-            throw new Error('Not authorized');
+            throw new Error("Not authorized");
         }
     }
     if (!token) {
         res.status(401);
-        throw new Error('Not authorized, no token');
+        throw new Error("Not authorized, no token");
     }
 }));
