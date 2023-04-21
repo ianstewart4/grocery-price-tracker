@@ -24,7 +24,6 @@ module.exports = {
       "lofi",
       "pastel",
       "fantasy",
-      "wireframe",
       "black",
       "luxury",
       "dracula",
