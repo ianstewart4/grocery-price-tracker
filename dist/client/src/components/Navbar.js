@@ -7,7 +7,17 @@ const react_1 = __importDefault(require("react"));
 const react_router_dom_1 = require("react-router-dom");
 const react_2 = require("react");
 const theme_change_1 = require("theme-change");
+const react_redux_1 = require("react-redux");
+const authSlice_1 = require("../features/auth/authSlice");
 function Navbar() {
+    const navigate = (0, react_router_dom_1.useNavigate)();
+    const dispatch = (0, react_redux_1.useDispatch)();
+    const { user } = (0, react_redux_1.useSelector)((state) => state.auth);
+    const onLogout = () => {
+        dispatch((0, authSlice_1.logout)());
+        dispatch((0, authSlice_1.reset)());
+        navigate("/");
+    };
     const themeValues = [
         "light",
         "dark",
@@ -69,10 +79,11 @@ function Navbar() {
                 react_1.default.createElement("li", null,
                     react_1.default.createElement("a", null, "My Items")))),
         react_1.default.createElement("div", { className: "navbar-end gap-3" },
-            react_1.default.createElement(react_router_dom_1.Link, { to: "/login", className: "btn" }, "Login"),
-            react_1.default.createElement(react_router_dom_1.Link, { to: "/register", className: "btn" }, "Sign Up"),
+            user ? (react_1.default.createElement("button", { onClick: onLogout, className: "btn" }, "Logout")) : (react_1.default.createElement(react_1.default.Fragment, null,
+                react_1.default.createElement(react_router_dom_1.Link, { to: "/login", className: "btn" }, "Login"),
+                react_1.default.createElement(react_router_dom_1.Link, { to: "/register", className: "btn" }, "Sign Up"))),
             react_1.default.createElement("select", { className: "dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52", "data-choose-theme": true },
                 react_1.default.createElement("option", null, "Theme"),
-                themeValues.map((theme) => (react_1.default.createElement("option", null, theme)))))));
+                themeValues.map((theme) => (react_1.default.createElement("option", { key: theme }, theme)))))));
 }
 exports.default = Navbar;

@@ -5,11 +5,22 @@ import {
   FaSignOutAlt,
   FaUser,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { themeChange } from "theme-change";
+import { useSelector, useDispatch } from "react-redux";
+import { logout, reset } from "../features/auth/authSlice";
 
 function Navbar() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const onLogout = () => {
+    dispatch(logout());
+    dispatch(reset());
+    navigate("/");
+  };
   const themeValues = [
     "light",
     "dark",
@@ -114,19 +125,28 @@ function Navbar() {
         </ul>
       </div>
       <div className="navbar-end gap-3">
-        <Link to="/login" className="btn">
-          Login
-        </Link>
-        <Link to="/register" className="btn">
-          Sign Up
-        </Link>
+        {user ? (
+          <button onClick={onLogout} className="btn">
+            Logout
+          </button>
+        ) : (
+          <>
+            <Link to="/login" className="btn">
+              Login
+            </Link>
+            <Link to="/register" className="btn">
+              Sign Up
+            </Link>
+          </>
+        )}
+
         <select
           className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
           data-choose-theme
         >
           <option>Theme</option>
           {themeValues.map((theme) => (
-            <option>{theme}</option>
+            <option key={theme}>{theme}</option>
           ))}
         </select>
       </div>
