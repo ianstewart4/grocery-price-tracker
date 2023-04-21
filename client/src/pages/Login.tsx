@@ -2,6 +2,11 @@ import * as React from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useSelector, useDispatch } from "react-redux";
+import { login, reset } from "../features/auth/authSlice";
+import Spinner from "../components/Spinner";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -10,6 +15,25 @@ function Login() {
   });
 
   const { email, password } = formData;
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message);
+    }
+
+    if (isSuccess || user) {
+      navigate("/");
+    }
+
+    dispatch(reset());
+  }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState) => ({
@@ -20,7 +44,19 @@ function Login() {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const userData = {
+      email,
+      password,
+    };
+
+    dispatch(login(userData));
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <div>
       <Navbar />
@@ -69,12 +105,12 @@ function Login() {
                     </a>
                   </label>
                 </div>
+                <div className="form-control mt-6 gap-1">
+                  <button type="submit" className="btn btn-primary">
+                    Login
+                  </button>
+                </div>
               </form>
-              <div className="form-control mt-6 gap-1">
-                <button type="submit" className="btn btn-primary">
-                  Login
-                </button>
-              </div>
             </div>
           </div>
         </div>

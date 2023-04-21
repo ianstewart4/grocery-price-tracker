@@ -29,18 +29,43 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(require("react"));
 const Navbar_1 = __importDefault(require("../components/Navbar"));
 const react_1 = require("react");
+const react_router_dom_1 = require("react-router-dom");
+const react_toastify_1 = require("react-toastify");
+const react_redux_1 = require("react-redux");
+const authSlice_1 = require("../features/auth/authSlice");
+const Spinner_1 = __importDefault(require("../components/Spinner"));
 function Login() {
     const [formData, setFormData] = (0, react_1.useState)({
         email: "",
         password: "",
     });
     const { email, password } = formData;
+    const navigate = (0, react_router_dom_1.useNavigate)();
+    const dispatch = (0, react_redux_1.useDispatch)();
+    const { user, isLoading, isError, isSuccess, message } = (0, react_redux_1.useSelector)((state) => state.auth);
+    (0, react_1.useEffect)(() => {
+        if (isError) {
+            react_toastify_1.toast.error(message);
+        }
+        if (isSuccess || user) {
+            navigate("/");
+        }
+        dispatch((0, authSlice_1.reset)());
+    }, [user, isError, isSuccess, message, navigate, dispatch]);
     const onChange = (e) => {
         setFormData((prevState) => (Object.assign(Object.assign({}, prevState), { [e.target.name]: e.target.value })));
     };
     const onSubmit = (e) => {
         e.preventDefault();
+        const userData = {
+            email,
+            password,
+        };
+        dispatch((0, authSlice_1.login)(userData));
     };
+    if (isLoading) {
+        return React.createElement(Spinner_1.default, null);
+    }
     return (React.createElement("div", null,
         React.createElement(Navbar_1.default, null),
         React.createElement("div", { className: "hero min-h-screen bg-base-200" },
@@ -60,8 +85,8 @@ function Login() {
                                     React.createElement("span", { className: "label-text" }, "Password")),
                                 React.createElement("input", { type: "password", id: "password", name: "password", value: password, placeholder: "password", onChange: onChange, className: "input input-bordered" }),
                                 React.createElement("label", { className: "label" },
-                                    React.createElement("a", { href: "#", className: "label-text-alt link link-hover" }, "Forgot password?")))),
-                        React.createElement("div", { className: "form-control mt-6 gap-1" },
-                            React.createElement("button", { type: "submit", className: "btn btn-primary" }, "Login"))))))));
+                                    React.createElement("a", { href: "#", className: "label-text-alt link link-hover" }, "Forgot password?"))),
+                            React.createElement("div", { className: "form-control mt-6 gap-1" },
+                                React.createElement("button", { type: "submit", className: "btn btn-primary" }, "Login")))))))));
 }
 exports.default = Login;

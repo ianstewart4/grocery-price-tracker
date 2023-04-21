@@ -22,9 +22,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(require("react"));
+const Navbar_1 = __importDefault(require("../components/Navbar"));
 function Dashboard() {
-    return React.createElement("div", null, "Dashboard");
+    return (React.createElement("div", null,
+        React.createElement(Navbar_1.default, null),
+        React.createElement("div", null,
+            React.createElement("h1", null, "Dashboard"))));
 }
 exports.default = Dashboard;
