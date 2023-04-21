@@ -11,7 +11,7 @@ exports.default = (0, vite_1.defineConfig)({
     server: {
         port: 3000,
         proxy: {
-            "/api": "Enter your backend host with port",
+            "/api": "http://localhost:8000",
         },
     },
     plugins: [

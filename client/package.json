@@ -1,6 +1,7 @@
 {
-  "name": "vite-mern-template",
+  "name": "client",
   "version": "1.0.0",
+  "proxy": "http://localhost:5000",
   "type": "module",
   "repository": "https://github.com/apicgg/vite-mern-template.git",
   "license": "MIT",
