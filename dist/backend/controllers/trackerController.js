@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTracker = exports.updateTracker = exports.setTracker = exports.getTrackers = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const trackerModel_1 = require("../models/trackerModel");
-const userModel_1 = require("../models/userModel");
 // @desc    Get Trackers
 // @route   GET /api/Trackers
 // @access  Private
@@ -72,14 +71,14 @@ exports.updateTracker = (0, express_async_handler_1.default)((req, res) => __awa
         throw new Error("Tracker not found");
     }
     // @ts-ignore will have to figure out a later date. Won't break
-    const user = yield userModel_1.User.findById(req.user.id);
+    // const user = await User.findById(req.user.id);
     // Check for user
-    if (!user) {
+    if (!req.user.id) {
         res.status(401);
         throw new Error("User not found");
     }
     // Make sure the logged in user matches the tracker user
-    if (tracker.user.toString() !== user.id) {
+    if (tracker.user.toString() !== req.user.id) {
         res.status(401);
         throw new Error("User not authorized");
     }
@@ -95,14 +94,14 @@ exports.deleteTracker = (0, express_async_handler_1.default)((req, res) => __awa
         throw new Error("Tracker not found");
     }
     // @ts-ignore will have to figure out a later date. Won't break
-    const user = yield userModel_1.User.findById(req.user.id);
+    // const user = await User.findById(req.user.id);
     // Check for user
-    if (!user) {
+    if (!req.user.id) {
         res.status(401);
         throw new Error("User not found");
     }
     // Make sure the logged in user matches the tracker user
-    if (tracker.user.toString() !== user.id) {
+    if (tracker.user.toString() !== req.user.id) {
         res.status(401);
         throw new Error("User not authorized");
     }

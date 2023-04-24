@@ -64,16 +64,16 @@ export const updateTracker = asyncHandler(
       throw new Error("Tracker not found");
     }
     // @ts-ignore will have to figure out a later date. Won't break
-    const user = await User.findById(req.user.id);
+    // const user = await User.findById(req.user.id);
 
     // Check for user
-    if (!user) {
+    if (!req.user.id) {
       res.status(401);
       throw new Error("User not found");
     }
 
     // Make sure the logged in user matches the tracker user
-    if (tracker.user.toString() !== user.id) {
+    if (tracker.user.toString() !== req.user.id) {
       res.status(401);
       throw new Error("User not authorized");
     }
@@ -96,16 +96,16 @@ export const deleteTracker = asyncHandler(
     }
 
     // @ts-ignore will have to figure out a later date. Won't break
-    const user = await User.findById(req.user.id);
+    // const user = await User.findById(req.user.id);
 
     // Check for user
-    if (!user) {
+    if (!req.user.id) {
       res.status(401);
       throw new Error("User not found");
     }
 
     // Make sure the logged in user matches the tracker user
-    if (tracker.user.toString() !== user.id) {
+    if (tracker.user.toString() !== req.user.id) {
       res.status(401);
       throw new Error("User not authorized");
     }

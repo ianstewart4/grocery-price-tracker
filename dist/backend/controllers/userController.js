@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMe = exports.loginUser = exports.registerUser = void 0;
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const userModel_1 = require("../models/userModel");
 // @desc    Register new user
@@ -24,13 +24,13 @@ exports.registerUser = (0, express_async_handler_1.default)((req, res) => __awai
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
         res.status(400);
-        throw new Error('Please fill in all fields');
+        throw new Error("Please fill in all fields");
     }
     // Check if user exists
     const userExists = yield userModel_1.User.findOne({ email });
     if (userExists) {
         res.status(400);
-        throw new Error('User already exists');
+        throw new Error("User already exists");
     }
     // Hash password
     const salt = yield bcrypt.genSalt(10);
@@ -51,7 +51,7 @@ exports.registerUser = (0, express_async_handler_1.default)((req, res) => __awai
     }
     else {
         res.status(400);
-        throw new Error('Invalid user data');
+        throw new Error("Invalid user data");
     }
 }));
 // @desc    Authenticate new user
@@ -71,7 +71,7 @@ exports.loginUser = (0, express_async_handler_1.default)((req, res) => __awaiter
     }
     else {
         res.status(400);
-        throw new Error('Invalid credentials');
+        throw new Error("Invalid credentials");
     }
 }));
 // @desc    Get user data
@@ -79,16 +79,17 @@ exports.loginUser = (0, express_async_handler_1.default)((req, res) => __awaiter
 // @access  Private
 exports.getMe = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // @ts-ignore properties do not exist on type
-    const { _id, name, email } = yield userModel_1.User.findById(req.user.id);
-    res.status(200).json({
-        id: _id,
-        name,
-        email,
-    });
+    // const { _id, name, email } = await User.findById(req.user.id)
+    // res.status(200).json({
+    //     id: _id,
+    //     name,
+    //     email,
+    // })
+    res.status(200).json(req.user);
 }));
 // Generate JWT
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d'
+        expiresIn: "30d",
     });
 };
