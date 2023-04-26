@@ -5,10 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const react_2 = require("react");
+const react_redux_1 = require("react-redux");
+const productSlice_1 = require("../features/products/productSlice");
 function ProductForm() {
     const [product, setProduct] = (0, react_2.useState)("");
+    const dispatch = (0, react_redux_1.useDispatch)();
     const onSubmit = (e) => {
         e.preventDefault();
+        dispatch((0, productSlice_1.findProduct)({ product }));
+        setProduct("");
     };
     return (react_1.default.createElement("div", { className: "input-group", title: "Enter product URL" },
         react_1.default.createElement("input", { type: "text", placeholder: "Find Superstore Items", className: "input input-bordered w-9/12", onSubmit: onSubmit, value: product, onChange: (e) => setProduct(e.target.value) }),
