@@ -9,6 +9,7 @@ const react_2 = require("react");
 const theme_change_1 = require("theme-change");
 const react_redux_1 = require("react-redux");
 const authSlice_1 = require("../features/auth/authSlice");
+const ProductForm_1 = __importDefault(require("./ProductForm"));
 function Navbar() {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const dispatch = (0, react_redux_1.useDispatch)();
@@ -52,32 +53,11 @@ function Navbar() {
         (0, theme_change_1.themeChange)(false);
         // 👆 false parameter is required for react project
     }, []);
-    return (react_1.default.createElement("div", { className: "navbar bg-base-100 fixed" },
+    return (react_1.default.createElement("div", { className: "navbar bg-base-100 sticky" },
         react_1.default.createElement("div", { className: "navbar-start" },
-            react_1.default.createElement("div", { className: "dropdown" },
-                react_1.default.createElement("label", { tabIndex: 0, className: "btn btn-ghost lg:hidden" },
-                    react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-5 w-5", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
-                        react_1.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M4 6h16M4 12h8m-8 6h16" }))),
-                react_1.default.createElement("ul", { tabIndex: 0, className: "menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52" },
-                    react_1.default.createElement("li", null,
-                        react_1.default.createElement("a", null, "Item 1")),
-                    react_1.default.createElement("li", { tabIndex: 0 },
-                        react_1.default.createElement("a", { className: "justify-between" },
-                            "Parent",
-                            react_1.default.createElement("svg", { className: "fill-current", xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24" },
-                                react_1.default.createElement("path", { d: "M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" }))),
-                        react_1.default.createElement("ul", { className: "p-2" },
-                            react_1.default.createElement("li", null,
-                                react_1.default.createElement("a", null, "Submenu 1")),
-                            react_1.default.createElement("li", null,
-                                react_1.default.createElement("a", null, "Submenu 2")))),
-                    react_1.default.createElement("li", null,
-                        react_1.default.createElement("a", null, "Item 3")))),
-            react_1.default.createElement(react_router_dom_1.Link, { to: "/", className: "btn btn-ghost normal-case text-xl" }, "Grocery Price Tracker")),
+            react_1.default.createElement(ProductForm_1.default, null)),
         react_1.default.createElement("div", { className: "navbar-center hidden lg:flex" },
-            react_1.default.createElement("ul", { className: "menu menu-horizontal px-1" },
-                react_1.default.createElement("li", null,
-                    react_1.default.createElement("a", null, "My Items")))),
+            react_1.default.createElement(react_router_dom_1.Link, { to: "/", className: "btn btn-ghost normal-case text-xl" }, "Grocery Price Tracker")),
         react_1.default.createElement("div", { className: "navbar-end gap-3" },
             user ? (react_1.default.createElement("button", { onClick: onLogout, className: "btn" }, "Logout")) : (react_1.default.createElement(react_1.default.Fragment, null,
                 react_1.default.createElement(react_router_dom_1.Link, { to: "/login", className: "btn" }, "Login"),
