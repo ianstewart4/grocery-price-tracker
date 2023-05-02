@@ -2,25 +2,25 @@ import React from "react";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { findProduct } from "../features/products/productSlice";
+// import { findProduct } from "../features/products/productSlice";
 
 function ProductForm() {
   const [product, setProduct] = useState("");
 
   const dispatch = useDispatch();
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    dispatch(findProduct({ product }));
-    setProduct("");
-  };
+  //   const onSubmit = (e) => {
+  //     e.preventDefault();
+  //     dispatch(findProduct({ product }));
+  //     setProduct("");
+  //   };
   return (
     <div className="input-group" title="Enter product URL">
       <input
         type="text"
         placeholder="Find Superstore Items"
         className="input input-bordered w-9/12"
-        onSubmit={onSubmit}
+        // onSubmit={onSubmit}
         value={product}
         onChange={(e) => setProduct(e.target.value)}
       />
