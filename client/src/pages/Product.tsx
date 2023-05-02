@@ -3,15 +3,15 @@ import Navbar from "../components/Navbar";
 import { useSelector } from "react-redux";
 
 function Product() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const { product } = useSelector((state) => state.product);
+  // const { product } = useSelector((state) => state.product);
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate("/login");
+  //   }
+  // }, [user, navigate]);
 
   return (
     <div>

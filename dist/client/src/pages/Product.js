@@ -5,10 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const Navbar_1 = __importDefault(require("../components/Navbar"));
-const react_redux_1 = require("react-redux");
-function Product({ productID }) {
-    const navigate = useNavigate();
-    const { product } = (0, react_redux_1.useSelector)((state) => state.product);
+function Product() {
+    // const navigate = useNavigate();
+    // const { product } = useSelector((state) => state.product);
+    // useEffect(() => {
+    //   if (!user) {
+    //     navigate("/login");
+    //   }
+    // }, [user, navigate]);
     return (react_1.default.createElement("div", null,
         react_1.default.createElement(Navbar_1.default, null),
         react_1.default.createElement("div", { className: "card lg:card-side bg-base-100 shadow-xl" },
