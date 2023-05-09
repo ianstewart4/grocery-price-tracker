@@ -9,7 +9,6 @@ const react_2 = require("react");
 const theme_change_1 = require("theme-change");
 const react_redux_1 = require("react-redux");
 const authSlice_1 = require("../features/auth/authSlice");
-const ProductForm_1 = __importDefault(require("./ProductForm"));
 function Navbar() {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const dispatch = (0, react_redux_1.useDispatch)();
@@ -55,7 +54,11 @@ function Navbar() {
     }, []);
     return (react_1.default.createElement("div", { className: "navbar bg-base-100 sticky" },
         react_1.default.createElement("div", { className: "navbar-start" },
-            react_1.default.createElement(ProductForm_1.default, null)),
+            react_1.default.createElement("div", { className: "input-group", title: "Enter product URL" },
+                react_1.default.createElement("input", { type: "text", placeholder: "Find Superstore Items", className: "input input-bordered w-9/12" }),
+                react_1.default.createElement("button", { className: "btn btn-square", type: "submit" },
+                    react_1.default.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
+                        react_1.default.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" }))))),
         react_1.default.createElement("div", { className: "navbar-center hidden lg:flex" },
             react_1.default.createElement(react_router_dom_1.Link, { to: "/", className: "btn btn-ghost normal-case text-xl" }, "Grocery Price Tracker")),
         react_1.default.createElement("div", { className: "navbar-end gap-3" },
