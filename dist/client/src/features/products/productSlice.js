@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.reset = exports.productSlice = void 0;
 const toolkit_1 = require("@reduxjs/toolkit");
 const initialState = {
-    product: "",
+    product: {},
     isError: false,
     isSuccess: false,
     isLoading: false,
