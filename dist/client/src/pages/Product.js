@@ -5,9 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importDefault(require("react"));
 const Navbar_1 = __importDefault(require("../components/Navbar"));
+const react_redux_1 = require("react-redux");
 function Product() {
     // const navigate = useNavigate();
-    // const { product } = useSelector((state) => state.product);
+    const { product } = (0, react_redux_1.useSelector)((state) => state.product);
     // useEffect(() => {
     //   if (!user) {
     //     navigate("/login");
@@ -19,7 +20,7 @@ function Product() {
             react_1.default.createElement("figure", null,
                 react_1.default.createElement("img", { src: true, alt: "Album" })),
             react_1.default.createElement("div", { className: "card-body" },
-                react_1.default.createElement("h2", { className: "card-title" }, "New album is released!"),
+                react_1.default.createElement("h2", { className: "card-title" }, product),
                 react_1.default.createElement("p", null, "Click the button to listen on Spotiwhy app."),
                 react_1.default.createElement("div", { className: "card-actions justify-end" },
                     react_1.default.createElement("button", { className: "btn btn-primary" }, "Track"))))));

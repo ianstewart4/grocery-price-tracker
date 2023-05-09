@@ -59,6 +59,7 @@ function Dashboard() {
             navigate("/login");
         }
     }, [user, navigate]);
+    // TODO: Fix double render at the beginning
     (0, react_2.useEffect)(() => {
         // data fetching here
         console.log("This is the userProductID: " + userProductID);
