@@ -43,12 +43,13 @@ const react_1 = require("react");
 const react_2 = require("react");
 const react_router_dom_1 = require("react-router-dom");
 const react_redux_1 = require("react-redux");
+const ProductDisplay_1 = __importDefault(require("../components/ProductDisplay"));
 const PRODUCT_API = "/api/products/";
 function Dashboard() {
     const navigate = (0, react_router_dom_1.useNavigate)();
     const { user } = (0, react_redux_1.useSelector)((state) => state.auth);
     const [userProductID, setUserProductID] = (0, react_1.useState)("");
-    const [productData, setProductData] = (0, react_1.useState)({});
+    const [productData, setProductData] = (0, react_1.useState)(null);
     const handleSubmit = (e) => {
         e.preventDefault();
         setUserProductID(e.currentTarget.elements.id.value);
@@ -59,24 +60,26 @@ function Dashboard() {
             navigate("/login");
         }
     }, [user, navigate]);
-    // TODO: Fix double render at the beginning
+    // TODO: Fix: running twice on initial load
     (0, react_2.useEffect)(() => {
         // data fetching here
         console.log("This is the userProductID: " + userProductID);
         const fetchData = () => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const response = yield axios_1.default.post(PRODUCT_API, {
-                    productID: userProductID,
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                });
-                setProductData(response.data);
-                console.log(response.data);
-            }
-            catch (err) {
-                console.log(err);
+            if (userProductID) {
+                try {
+                    const response = yield axios_1.default.post(PRODUCT_API, {
+                        productID: userProductID,
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${user.token}`,
+                        },
+                    });
+                    setProductData(response.data);
+                    console.log(response.data);
+                }
+                catch (err) {
+                    console.log(err);
+                }
             }
         });
         fetchData();
@@ -86,9 +89,9 @@ function Dashboard() {
     return (React.createElement("div", null,
         React.createElement(Navbar_1.default, null),
         React.createElement("section", { className: "min-h-screen hero-overlay bg-opacity-60" },
-            React.createElement("h1", { className: "text-center text-xl pt-10" },
+            !productData && (React.createElement("h1", { className: "text-center text-xl pt-10" },
                 "Welcome ",
-                user && user.name),
+                user && user.name)),
             React.createElement("form", { onSubmit: handleSubmit },
                 React.createElement("div", { className: "input-group" },
                     React.createElement("input", { type: "text", name: "text", id: "id", placeholder: "Find Superstore Items", className: "input input-bordered w-9/12", onSubmit: handleSubmit }),
@@ -96,7 +99,8 @@ function Dashboard() {
                         React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", className: "h-6 w-6", fill: "none", viewBox: "0 0 24 24", stroke: "currentColor" },
                             React.createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" }))))),
             React.createElement("p", null, "Trackers Dashboard"),
-            React.createElement("h1", null, JSON.stringify(productData))),
+            React.createElement("h1", null, productData && JSON.stringify(productData)),
+            productData && React.createElement(ProductDisplay_1.default, { props: productData })),
         React.createElement(Footer_1.default, null)));
 }
 exports.default = Dashboard;

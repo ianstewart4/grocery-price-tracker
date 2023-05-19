@@ -6,13 +6,14 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import ProductDisplay from "../components/ProductDisplay";
 const PRODUCT_API = "/api/products/";
 
 function Dashboard() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [userProductID, setUserProductID] = useState("");
-  const [productData, setProductData] = useState({});
+  const [productData, setProductData] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,27 +27,29 @@ function Dashboard() {
     }
   }, [user, navigate]);
 
-  // TODO: Fix double render at the beginning
+  // TODO: Fix: running twice on initial load
   useEffect(() => {
     // data fetching here
     console.log("This is the userProductID: " + userProductID);
     const fetchData = async () => {
-      try {
-        const response = await axios.post(
-          PRODUCT_API,
-          {
-            productID: userProductID,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
+      if (userProductID) {
+        try {
+          const response = await axios.post(
+            PRODUCT_API,
+            {
+              productID: userProductID,
             },
-          }
-        );
-        setProductData(response.data);
-        console.log(response.data);
-      } catch (err) {
-        console.log(err);
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+            }
+          );
+          setProductData(response.data);
+          console.log(response.data);
+        } catch (err) {
+          console.log(err);
+        }
       }
     };
     fetchData();
@@ -58,9 +61,11 @@ function Dashboard() {
     <div>
       <Navbar />
       <section className="min-h-screen hero-overlay bg-opacity-60">
-        <h1 className="text-center text-xl pt-10">
-          Welcome {user && user.name}
-        </h1>
+        {!productData && (
+          =<h1 className="text-center text-xl pt-10">
+            Welcome {user && user.name}
+          </h1>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <input
@@ -90,27 +95,9 @@ function Dashboard() {
           </div>
         </form>
         <p>Trackers Dashboard</p>
-        <h1>{JSON.stringify(productData)}</h1>
+        <h1>{productData && JSON.stringify(productData)}</h1>
+        {productData && <ProductDisplay props={productData} />}
       </section>
-      {/* <div
-        className="hero min-h-screen"
-        style={{
-          backgroundImage: `url("/images/stock/photo-1507358522600-9f71e620c44e.jpg")`,
-        }}
-      >
-        <div className="hero-overlay bg-opacity-60"></div>
-        <div className="hero-content text-center text-neutral-content">
-          <div className="max-w-md">
-            <h1 className="mb-5 text-5xl font-bold">Hi there!</h1>
-            <p>Tired of paying too much for your groceries?</p>
-            <p className="mb-5">
-              Well there's nothing I can do about that, but here's a way to keep
-              a little more money in your pocket!
-            </p>
-            <button className="btn btn-primary">Get Started</button>
-          </div>
-        </div>
-      </div> */}
       <Footer />
     </div>
   );
