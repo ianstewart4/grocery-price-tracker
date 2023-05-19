@@ -54,7 +54,7 @@ function Navbar() {
   return (
     <div className="navbar bg-base-100 sticky">
       <div className="navbar-start">
-        <div className="input-group" title="Enter product URL">
+        {/* <div className="input-group" title="Enter product URL">
           <input
             type="text"
             placeholder="Find Superstore Items"
@@ -80,13 +80,12 @@ function Navbar() {
               />
             </svg>
           </button>
-        </div>
-      </div>
-      <div className="navbar-center hidden lg:flex">
+        </div> */}
         <Link to="/" className="btn btn-ghost normal-case text-xl">
           Grocery Price Tracker
         </Link>
       </div>
+      <div className="navbar-center hidden lg:flex"></div>
 
       <div className="navbar-end gap-3">
         {user ? (
