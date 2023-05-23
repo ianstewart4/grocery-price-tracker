@@ -62,7 +62,7 @@ function Dashboard() {
       <Navbar />
       <section className="min-h-screen hero-overlay bg-opacity-60">
         {!productData && (
-          =<h1 className="text-center text-xl pt-10">
+          <h1 className="text-center text-xl pt-10">
             Welcome {user && user.name}
           </h1>
         )}
