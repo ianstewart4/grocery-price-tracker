@@ -128,8 +128,10 @@ _Coming soon..._
 - [x] Let users look up items using item code
 - [ ] Change theme selector to light/dark toggle with default being system setting
 - [ ] Allow users to select their store
+- [ ] Allow users to create a list of watched and tracked items
+- [ ] Allow users to set up and receive email notification of items on sale
 - [ ] Allow users to search for items directly in the app
-- [ ] Add "components" document to easily copy & paste sections of the readme
+- [ ] Track price history
 - [ ] Add other chains
     - [ ] Other Loblaws chains
     - [ ] Walmart
