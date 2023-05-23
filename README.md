@@ -83,7 +83,7 @@ To get a local copy up and running follow these simple steps.
 
 ### Installation
 
-1. Set up a cluster with MongoDB
+1. Set up a database with MongoDB
 2. Clone the repo
    ```sh
    git clone https://github.com/ianstewart4/grocery-price-tracker.git
@@ -103,6 +103,10 @@ To get a local copy up and running follow these simple steps.
    DB_PASSWORD 
 
    JWT_SECRET
+   ```
+5. Run development server
+    ```sh
+   npm run dev
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
