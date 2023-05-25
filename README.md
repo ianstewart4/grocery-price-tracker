@@ -47,7 +47,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-I've always been a frugal shopper, always looking for deals and waiting for sales to stock up on my frequently purchased items. With groceries making up the bulk of my purchases throughout the year by a wide margin, it seemed like the right place to focus to save the most money. I kept finding myself missing out on sales either by catching them too late, or seeing them right after I made a purchase, so I decided to make an app that would allow me to track my frequently purchased items and never miss another sale. 
+I've always been a frugal shopper, always looking for deals and waiting for sales to stock up on my frequently purchased items. With groceries making up the bulk of my purchases throughout the year by a wide margin, it seemed like the right place to focus my efforts to save the most money. I kept finding myself missing out on sales either by catching them too late, or seeing them right after I made a purchase, so I decided to make an app that would allow me to track my frequently purchased items and never miss another sale. 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
