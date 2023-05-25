@@ -38,7 +38,6 @@
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
@@ -48,7 +47,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-I've always been a frugal shopper, always looking for deals and waiting for sales to stock up on my frequently purchased items. With groceries making up the bulk of my purchases throughout the year by a wide margin, it seemed like the right place to focus to save the most money. I kept finding myself missing out on sales either by catching them too late, or seeing them right after I made a purchase, so I decided to make an app that would allow me to track my frequently purchased items and never miss another sale. 
+I've always been a frugal shopper, always looking for deals and waiting for sales to stock up on my frequently purchased items. With groceries making up the bulk of my purchases throughout the year by a wide margin, it seemed like the right place to focus my efforts to save the most money. I kept finding myself missing out on sales either by catching them too late, or seeing them right after I made a purchase, so I decided to make an app that would allow me to track my frequently purchased items and never miss another sale. 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -128,8 +127,10 @@ _Coming soon..._
 - [x] Let users look up items using item code
 - [ ] Change theme selector to light/dark toggle with default being system setting
 - [ ] Allow users to select their store
+- [ ] Allow users to create a list of watched and tracked items
+- [ ] Allow users to set up and receive email notification of items on sale
 - [ ] Allow users to search for items directly in the app
-- [ ] Add "components" document to easily copy & paste sections of the readme
+- [ ] Track price history
 - [ ] Add other chains
     - [ ] Other Loblaws chains
     - [ ] Walmart
