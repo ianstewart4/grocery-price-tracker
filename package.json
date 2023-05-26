@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "start": "node dist/server.js",
     "client": "npm run start --prefix client",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon --delay 1500ms dist/server.js\" \"npm run client\""
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon --delay 1500ms dist/backend/server.js\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
