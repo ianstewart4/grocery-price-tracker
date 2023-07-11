@@ -136,6 +136,9 @@ _Coming soon..._
     - [ ] Walmart
     - [ ] Sobeys
 
+
+See the [open issues](https://github.com/ianstewart4/grocery-price-tracker/issues) for a full list of proposed features (and known issues).
+
 ## Ideas
 - [ ] Allow users to generate and edit printable grocery lists
 - [ ] Let users add items to a basket which will let users quickly check which stores have the best prices
@@ -143,7 +146,6 @@ _Coming soon..._
 - [ ] If a user is willing to make trips to multiple stores, create printable lists for items with the best price and respective locations
     - [ ]  Let users select number of stops they're willing to make
 
-See the [open issues](https://github.com/ianstewart4/grocery-price-tracker/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
