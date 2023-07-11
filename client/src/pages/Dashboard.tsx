@@ -60,44 +60,46 @@ function Dashboard() {
   return (
     <div>
       <Navbar />
-      <section className="min-h-screen hero-overlay bg-opacity-60">
-        {!productData && (
-          <h1 className="text-center text-xl pt-10">
-            Welcome {user && user.name}
-          </h1>
-        )}
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <input
-              type="text"
-              name="text"
-              id="id"
-              placeholder="Find Superstore Items"
-              className="input input-bordered w-9/12"
-              onSubmit={handleSubmit}
-            />
-            <button className="btn btn-square" type="submit">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-          </div>
-        </form>
-        <p>Trackers Dashboard</p>
-        <h1>{productData && JSON.stringify(productData)}</h1>
-        {productData && <ProductDisplay props={productData} />}
-      </section>
+      <div>
+        <section className="min-h-screen hero-overlay bg-opacity-60 pt-8">
+          {!productData && (
+            <h1 className="text-center text-xl pt-10">
+              Welcome {user && user.name}
+            </h1>
+          )}
+          <form onSubmit={handleSubmit} className="mx-8">
+            <div className="input-group">
+              <input
+                type="text"
+                name="text"
+                id="id"
+                placeholder="Find Superstore Items"
+                className="input input-bordered w-9/12"
+                onSubmit={handleSubmit}
+              />
+              <button className="btn btn-square" type="submit">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </form>
+          <p className="m-8">Trackers Dashboard</p>
+          <h1 className="mx-8">{productData && JSON.stringify(productData)}</h1>
+          {productData && <ProductDisplay props={productData} />}
+        </section>
+      </div>
       <Footer />
     </div>
   );
