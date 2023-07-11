@@ -37,9 +37,9 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
     const brandName: string = response.data.brand ?? "";
     const itemName: string = response.data.name;
     const date: Date = new Date();
-    const imageURL: string = response.data.imageAssets[0].mediumUrl;
+    const imageURL: string = response.data.imageAssets[0].largeUrl;
     const link: string = `https://www.realcanadiansuperstore.ca${response.data.link}`;
-    const price: number = response.data.offers[0].price.value;
+    let price: number = response.data.offers[0].price.value;
 
     // PACKAGE INFO
     const packageSizeText: string = response.data.packageSize;
@@ -53,7 +53,6 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
     const compQty: number =
       response.data.offers[0].comparisonPrices[0].quantity;
     const divisor: number = packageSizeNum / compQty;
-    const unitPrice: number = price / divisor;
 
     // SALE INFO
     const onSale: boolean = response.data.offers[0].badges.dealBadge
@@ -82,12 +81,14 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
     } else if (saleType === "SALE") {
       // @ts-ignore
       saleValue = Number(saleText.slice(6));
-      salePrice = price - saleValue;
+      salePrice = price;
+      price = price + saleValue;
     }
 
     const currentPrice: number = salePrice ?? price;
     // TODO: Fix this so it gives accurate data
     const saleUnitPrice: number | null = salePrice ? salePrice / divisor : null;
+    const unitPrice: number = price / divisor;
 
     // I think this should go in the priceHistory controller but need to ensure it's called at the same time as this...
     // const priceHistory: IPriceHistory = await PriceHistory.create({
@@ -120,7 +121,7 @@ export const setProduct = asyncHandler(async (req: Request, res: Response) => {
       multiQty,
       limitQty,
     });
-    console.log("Adding new product");
+    console.log("Getting product details");
     res.status(200).json(product);
   } catch (err) {
     console.log(err);

@@ -45,9 +45,9 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
         const brandName = (_a = response.data.brand) !== null && _a !== void 0 ? _a : "";
         const itemName = response.data.name;
         const date = new Date();
-        const imageURL = response.data.imageAssets[0].mediumUrl;
+        const imageURL = response.data.imageAssets[0].largeUrl;
         const link = `https://www.realcanadiansuperstore.ca${response.data.link}`;
-        const price = response.data.offers[0].price.value;
+        let price = response.data.offers[0].price.value;
         // PACKAGE INFO
         const packageSizeText = response.data.packageSize;
         const packageSizeNum = Number(packageSizeText.split(" ")[0]);
@@ -58,7 +58,6 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
         // TODO: Fix this so it gives accurate data
         const compQty = response.data.offers[0].comparisonPrices[0].quantity;
         const divisor = packageSizeNum / compQty;
-        const unitPrice = price / divisor;
         // SALE INFO
         const onSale = response.data.offers[0].badges.dealBadge
             ? true
@@ -84,11 +83,13 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
         else if (saleType === "SALE") {
             // @ts-ignore
             saleValue = Number(saleText.slice(6));
-            salePrice = price - saleValue;
+            salePrice = price;
+            price = price + saleValue;
         }
         const currentPrice = salePrice !== null && salePrice !== void 0 ? salePrice : price;
         // TODO: Fix this so it gives accurate data
         const saleUnitPrice = salePrice ? salePrice / divisor : null;
+        const unitPrice = price / divisor;
         // I think this should go in the priceHistory controller but need to ensure it's called at the same time as this...
         // const priceHistory: IPriceHistory = await PriceHistory.create({
         //     productID,
@@ -119,7 +120,7 @@ exports.setProduct = (0, express_async_handler_1.default)((req, res) => __awaite
             multiQty,
             limitQty,
         });
-        console.log("Adding new product");
+        console.log("Getting product details");
         res.status(200).json(product);
     }
     catch (err) {
