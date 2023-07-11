@@ -2,7 +2,7 @@ import * as React from "react";
 
 function ProductDisplay({ props }) {
   return (
-    <div className="card lg:card-side bg-base-100 shadow-xl">
+    <div className="card lg:card-side bg-base-100 shadow-xl mx-8 my-2">
       <figure className="w-1/6">
         <img src={props.imageURL} alt="product image" />
       </figure>
@@ -11,22 +11,33 @@ function ProductDisplay({ props }) {
           {`${props.brandName} ${props.itemName}`} ({props.packageSizeText})
         </h2>
         <p>
-          Regular Price: {props.price} ({props.unitPrice.toFixed(2)}/
+          Regular Price: ${props.price} (${props.unitPrice.toFixed(2)}/
           {props.compQty}
           {props.packageUnits})
         </p>
         {props.salePrice && (
-          <p>
-            Sale Price: {props.salePrice} ({props.saleUnitPrice.toFixed(2)}/
-            {props.compQty}
-            {props.packageUnits})
-          </p>
+          <div>
+            <p>
+              Sale Price: ${props.salePrice} (${props.saleUnitPrice.toFixed(2)}/
+              {props.compQty}
+              {props.packageUnits})
+            </p>
+            <p>Ends {props.saleEndDate.slice(0, 10)}</p>
+          </div>
         )}
         <div className="card-actions justify-end">
           <button className="btn btn-primary">Add To List</button>
         </div>
-        <div className="card-actions justify-end">
+        {/* <div className="card-actions justify-end">
           <button className="btn btn-primary">Create Alert</button>
+        </div> */}
+        <div className="card-actions justify-end">
+          <button
+            onClick={() => window.open(props.link, "_blank")}
+            className="btn btn-primary"
+          >
+            Go to item
+          </button>
         </div>
       </div>
     </div>
