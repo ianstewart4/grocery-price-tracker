@@ -45,14 +45,16 @@ exports.login = (0, toolkit_1.createAsyncThunk)("auth/login", (user, thunkAPI) =
         return yield authService_1.default.login(user);
     }
     catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) ||
+        const message = (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
             error.message ||
             error.toString();
         return thunkAPI.rejectWithValue(message);
     }
 }));
 exports.logout = (0, toolkit_1.createAsyncThunk)("auth/logout", () => __awaiter(void 0, void 0, void 0, function* () {
-    yield authService_1.default.logout();
+    authService_1.default.logout(); // removed await
 }));
 exports.authSlice = (0, toolkit_1.createSlice)({
     name: "auth",
