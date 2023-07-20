@@ -3,12 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { themeChange } from "theme-change";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, reset } from "../features/auth/authSlice";
+import { logout, reset, RootState } from "../features/auth/authSlice";
 
 function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const onLogout = () => {
     dispatch(logout());
