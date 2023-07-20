@@ -1,14 +1,14 @@
 import axios from "axios";
 const API_URL = "/api/users/";
 
-interface IUser {
+export interface IUser {
   _id: string;
   name: string;
   email: string;
   token: string;
 }
 
-interface IUserData {
+export interface IUserData {
   user: IUser | null;
   isError: boolean;
   isSuccess: boolean;
