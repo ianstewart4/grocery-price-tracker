@@ -4,10 +4,11 @@ import { useEffect } from "react";
 import { themeChange } from "theme-change";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, reset, RootState } from "../features/auth/authSlice";
+import { AppDispatch } from "../app/store";
 
 function Navbar() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
 
   const onLogout = () => {
