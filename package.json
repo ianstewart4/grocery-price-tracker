@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/server.js",
+    "start": "concurrently \"nodemon --delay 1500ms dist/backend/server.js\" \"npm run client\"",
     "client": "npm run start --prefix client",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon --delay 1500ms dist/backend/server.js\" \"npm run client\""
   },
